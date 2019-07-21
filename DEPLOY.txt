@@ -1,0 +1,2 @@
+npm run build
+copiare il contenuto della cartella build fuori dalla cartella build

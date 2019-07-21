@@ -235,18 +235,21 @@ button svg {
   }
   .headingLinks {
     left: 0;
-    width: 103%
+    width: 100%
+  }
+  #info {
+    padding-right: 0px;
   }
 }
 
 @media only screen and (max-width:575.5px) {
   #profilePhoto {
-    max-width: 106.7%;
+    max-width: 103.2%;
     max-height: none
   }
   .headingLinks {
     left: 0;
-    width: 103%
+    width: 100%
   }
   .headingLinks .col-sm-2 {
     width: 20%
@@ -349,14 +352,14 @@ button svg {
   .leftEducation, .rightEducation {
     max-width: 445px
   }
-  
   .imgDiv, #profilePhoto {
     border-top-left-radius: 5px;
     border-bottom-left-radius: 0px;
   }
   .headingLinks {
     border-bottom-right-radius: 5px;
-    border-bottom-left-radius: 5px;;
+    border-bottom-left-radius: 5px;
+    ;
   }
 }
 
@@ -367,26 +370,21 @@ button svg {
   .doubleLine {
     max-height: 155px
   }
-
   .h6, h6 {
     font-size: 0.8rem;
   }
-
   .h5, h5 {
     font-size: 1.0rem;
   }
-
   .shadow {
     border-bottom-left-radius: 0px;
     border-bottom-right-radius: 0px;
   }
-  
   .imgDiv, #profilePhoto {
     border-top-left-radius: 5px;
     border-bottom-left-radius: 0px;
     border-top-right-radius: 5px;
   }
-  
   .headingLinks {
     border-bottom-right-radius: 5px;
   }
@@ -411,21 +409,20 @@ button svg {
     margin-right: 0;
     margin-top: 20px
   }
-
   .h6, h6 {
     font-size: 1.0rem;
   }
-
   .h5, h5 {
     font-size: 1.25rem;
   }
-
   .imgDiv, #profilePhoto, .headingLinks {
     border-radius: 0px;
   }
-
   .padua, .milan, .future {
     position: inherit;
+  }
+  #info {
+    padding-right: 0px;
   }
 }
 
