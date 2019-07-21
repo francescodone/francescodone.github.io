@@ -244,8 +244,9 @@ button svg {
 
 @media only screen and (max-width:575.5px) {
   #profilePhoto {
-    max-width: 103.2%;
-    max-height: none
+    max-width: 104%;
+    max-height: none;
+    overflow: hidden;
   }
   .headingLinks {
     left: 0;
