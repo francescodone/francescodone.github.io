@@ -241,7 +241,7 @@ button svg {
 
 @media only screen and (max-width:575.5px) {
   #profilePhoto {
-    max-width: 106.5%;
+    max-width: 106.7%;
     max-height: none
   }
   .headingLinks {
@@ -349,6 +349,15 @@ button svg {
   .leftEducation, .rightEducation {
     max-width: 445px
   }
+  
+  .imgDiv, #profilePhoto {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 0px;
+  }
+  .headingLinks {
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;;
+  }
 }
 
 @media only screen and (max-width:991.5px) {
@@ -365,6 +374,21 @@ button svg {
 
   .h5, h5 {
     font-size: 1.0rem;
+  }
+
+  .shadow {
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+  }
+  
+  .imgDiv, #profilePhoto {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 0px;
+    border-top-right-radius: 5px;
+  }
+  
+  .headingLinks {
+    border-bottom-right-radius: 5px;
   }
 }
 
@@ -401,8 +425,10 @@ button svg {
   }
 }
 
-
-
 .floatLeft {
   float: left;
+}
+
+.skillsDiv, .milestone {
+  border-radius: 5px !important;
 }
