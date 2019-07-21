@@ -420,6 +420,10 @@ button svg {
     font-size: 1.25rem;
   }
 
+  .imgDiv, #profilePhoto, .headingLinks {
+    border-radius: 0px;
+  }
+
   .padua, .milan, .future {
     position: inherit;
   }
