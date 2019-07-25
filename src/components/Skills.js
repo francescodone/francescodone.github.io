@@ -19,7 +19,10 @@ function Skills() {
                       <p id="skillzResume">
                         <span className="skillzTitle"><p><strong>Programming languages: </ strong></p></span>C++, Java, JavaScript, TypeScript, Game Maker Language, SQL.<br />
                         <span className="skillzTitle"><p><strong>Tech frameworks and tools: </ strong></p></span>Photoshop, ReactJS, Redux, AngularJS, git, npm, NodeJS, jQuery, WordPress, Ethereum Network, Blockchain, REST, Spring, Hibernate, PostgreSQL, Maven, JPA, Flyway, LaTex.<br />
-                        <span className="skillzTitle"><p><strong>Other: </ strong></p></span>Fundamentals of Digital Marketing (Google Digital Training).
+                        <span className="skillzTitle"><p><strong>Other: </ strong></p></span>
+                        <a href="https://drive.google.com/open?id=1pqGY49KrAXwDJerIEHg8P0S7TBRwIByH">Fundamentals of Digital Marketing (Google Digital Training)</a> <br />
+                        <a href="https://drive.google.com/open?id=1kPHJfxUAQCBEDM59lNO6qY3--H3aV_8h">Fundamentals of User Experience Design (Lacerba.io)</a> <br />
+                        <a href="https://drive.google.com/open?id=1B2L_IvY1GhtObjcYrvadd7BV_-ciVIid">Introduction to Design Thinking (Lacerba.io)</a>
                       </p>
                     </div>
                     <div className="col-md-6 floatLeft">
