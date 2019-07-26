@@ -34,7 +34,7 @@ function Work() {
                 <div class="circle-left" />
                 <h5>░░░░░░░░░░░░░░░</h5> 
                 <h6>░░░░░░░░░░░░</h6>
-                <p id="welcome"><span>░░░-░░░</span></p>
+                <p id="welcome"><span>░░░ - ░░░</span></p>
               </div>
             </div>
           </div>
