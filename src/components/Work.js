@@ -1,40 +1,40 @@
 import React from 'react';
 
-function Education() {
+function Work() {
   return (
-    <div class="container">
+<div class="container work">
       <div className="row">
         <div className="col-sm-12 top60c">
-          <h2 className="colorized">EDUCATION</h2>
+          <h2 className="colorized">WORK EXPERIENCE</h2>
           <div class="container">
             <div className="row">
               <div className="col-md-6 col-sm-12 milestone shadow firstEducation leftEducation doubleLine">
                 <div class="triangle-right" />
                 <div class="circle-right" />
-                <h5>High Scool Diploma</h5>
-                <h6>ISTITUTO VITO VOLTERRA (SAN DONÀ DI PIAVE)</h6>
-                <p id="welcome"><span>2011 - 2016</span></p>
+                <h5>Computer Technician Internship</h5>
+                <h6>SISTEMI HARDWARE COMITEC</h6>
+                <p id="welcome"><span>jun 2014 - aug 2014</span></p>
               </div>
               <div className="col-md-6 col-sm-12 milestone shadow firstEducation rightEducation doubleLine padua">
                 <div class="triangle-left" />
                 <div class="circle-left" />
-                <h5>BS in Computer Science</h5> 
-                <h6>UNIVERSITY OF PADUA</h6>
-                <p id="welcome"><span>2016 - 2019</span></p>
+                <h5>Web Developer Internship</h5> 
+                <h6>LOVEKAIZEN CREATIVE AGENCY</h6>
+                <p id="welcome"><span>jun 2015 – aug 2015</span></p>
               </div>
               <div className="col-sm-6 milestone shadow leftEducation milan">
                 <div class="triangle-right" />
                 <div class="circle-right" />
-                <h5>Master in Computer Science</h5>
-                <h6>UNIVERSITY OF MILAN</h6>
-                <p id="welcome"><span>2019 - Present</span></p>
+                <h5>Full Stack Developer Internship</h5>
+                <h6>CAPGEMINI ITALIA</h6>
+                <p id="welcome"><span>jun 2019 - jul 2019</span></p>
               </div>
               <div className="col-md-6 col-sm-12 milestone shadow firstEducation rightEducation lastEducation doubleLine future">
                 <div class="triangle-left" />
                 <div class="circle-left" />
                 <h5>░░░░░░░░░░░░░░░</h5> 
                 <h6>░░░░░░░░░░░░</h6>
-                <p id="welcome"><span>░░░ - ░░░</span></p>
+                <p id="welcome"><span>░░░-░░░</span></p>
               </div>
             </div>
           </div>
@@ -44,4 +44,4 @@ function Education() {
   );
 }
 
-export default Education;
+export default Work;

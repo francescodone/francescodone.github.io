@@ -349,6 +349,11 @@ button svg {
   border-bottom-right-radius: 5px;
 }
 
+.work {
+  position: absolute;
+  top: 1635px;
+}
+
 @media only screen and (max-width:1199px) {
   .leftEducation, .rightEducation {
     max-width: 445px
@@ -360,7 +365,9 @@ button svg {
   .headingLinks {
     border-bottom-right-radius: 5px;
     border-bottom-left-radius: 5px;
-    ;
+  }
+  .work {
+    top: 1690px;
   }
 }
 
@@ -389,6 +396,9 @@ button svg {
   .headingLinks {
     border-bottom-right-radius: 5px;
   }
+  .work {
+    top: 2475px;
+  }
 }
 
 @media only screen and (max-width:767.5px) {
@@ -397,6 +407,9 @@ button svg {
   }
   .doubleLine {
     max-height: 155px
+  }
+  .work {
+    top: 2435px;
   }
 }
 
@@ -424,6 +437,9 @@ button svg {
   }
   #info {
     padding-right: 0px;
+  }
+  .work {
+    top: 2870px;
   }
 }
 

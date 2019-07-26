@@ -3,6 +3,7 @@ import HeadingResume from './HeadingResume'
 import HeadingInformations from './HeadingInformations'
 import Skills from './Skills'
 import Education from './Education'
+import Work from './Work';
 
 function Home() {
   return (
@@ -13,6 +14,7 @@ function Home() {
         <HeadingInformations />
         <Skills />
         <Education />
+        <Work />
       </div>
     </div>
     </div>
