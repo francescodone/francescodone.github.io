@@ -14,7 +14,7 @@ function Home() {
         <HeadingInformations />
         <Skills />
         <Education />
-        <Work />
+        {/*<Work />*/}
       </div>
     </div>
     </div>
