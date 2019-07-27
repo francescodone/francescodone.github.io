@@ -22,7 +22,9 @@ function Skills() {
                         <span className="skillzTitle"><p><strong>Other: </ strong></p></span>
                         <a href="https://drive.google.com/open?id=1pqGY49KrAXwDJerIEHg8P0S7TBRwIByH">Fundamentals of Digital Marketing (Google Digital Training)</a> <br />
                         <a href="https://drive.google.com/open?id=1kPHJfxUAQCBEDM59lNO6qY3--H3aV_8h">Fundamentals of User Experience Design (Lacerba.io)</a> <br />
-                        <a href="https://drive.google.com/open?id=1B2L_IvY1GhtObjcYrvadd7BV_-ciVIid">Introduction to Design Thinking (Lacerba.io)</a>
+                        <a href="https://drive.google.com/open?id=1B2L_IvY1GhtObjcYrvadd7BV_-ciVIid">Introduction to Design Thinking (Lacerba.io)</a> <br />
+                        <a href="https://drive.google.com/open?id=1H_6mgiZs8iqG1xpTXaj8TSj4pu61Pc2s">Create a logo with Adobe Illustrator (Lacerba.io)</a> <br />
+                        <a href="https://drive.google.com/open?id=1iXGSozoeGRMh3xaygUe_H8VCjjRwnKu4">Basic Monetization Strategies (Lacerba.io)</a>
                       </p>
                     </div>
                     <div className="col-md-6 floatLeft">
