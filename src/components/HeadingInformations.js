@@ -38,7 +38,7 @@ function HeadingInformations() {
         </div>
         <div className="col-sm-10">
           <p>
-            <span>Via Bogoni 5, San Donà di Piave, VE 30027, Italia</span>
+            <span>San Donà di Piave, VE 30027, Italia</span>
           </p>
         </div>
         <div className="col-sm-2">
