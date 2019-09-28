@@ -14,7 +14,7 @@ function HeadingInformations() {
   return (
     <div id="info" className="col-sm-12 shadow">
       <div className="col-sm-12 col-md-12 col-lg-5 imgDiv">
-        <img id="profilePhoto" alt="Francesco Donè" src="profile.png"/>
+        <img id="profilePhoto" alt="Francesco Donè" src="profile.jpg"/>
       </div>
       <div className="col-sm-12 col-md-12 col-lg-7">
         <p id="welcome"><span>Hello & Welcome</span></p>
