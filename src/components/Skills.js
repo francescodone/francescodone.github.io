@@ -19,25 +19,20 @@ function Skills() {
                       <p id="skillzResume">
                         <span className="skillzTitle"><p><strong>Programming languages: </ strong></p></span>C++, Java, JavaScript, TypeScript, Game Maker Language, SQL.<br />
                         <span className="skillzTitle"><p><strong>Tech frameworks and tools: </ strong></p></span>Photoshop, ReactJS, Redux, AngularJS, git, npm, NodeJS, jQuery, WordPress, Ethereum Network, Blockchain, REST, Spring, Hibernate, PostgreSQL, Maven, JPA, Flyway, LaTex.<br />
+                      </p>
+                    </div>
+                    <div className="col-md-6 floatLeft">
+                    <p id="skillzResume">
                         <span className="skillzTitle"><p><strong>Other: </ strong></p></span>
                         <a href="https://drive.google.com/open?id=1pqGY49KrAXwDJerIEHg8P0S7TBRwIByH">Fundamentals of Digital Marketing (Google Digital Training)</a> <br />
                         <a href="https://drive.google.com/open?id=1kPHJfxUAQCBEDM59lNO6qY3--H3aV_8h">Fundamentals of User Experience Design (Lacerba.io)</a> <br />
                         <a href="https://drive.google.com/open?id=1B2L_IvY1GhtObjcYrvadd7BV_-ciVIid">Introduction to Design Thinking (Lacerba.io)</a> <br />
                         <a href="https://drive.google.com/open?id=1H_6mgiZs8iqG1xpTXaj8TSj4pu61Pc2s">Create a logo with Adobe Illustrator (Lacerba.io)</a> <br />
-                        <a href="https://drive.google.com/open?id=1iXGSozoeGRMh3xaygUe_H8VCjjRwnKu4">Basic Monetization Strategies (Lacerba.io)</a>
+                        <a href="https://drive.google.com/open?id=1iXGSozoeGRMh3xaygUe_H8VCjjRwnKu4">Basic Monetization Strategies (Lacerba.io)</a> <br />
+                        <a href="https://drive.google.com/file/d/1lPwUAfDdC3fqMIDWviM02GvcTqMjaDTW">Photographic illumination (Udemy)</a> <br />
+                        <a href="https://drive.google.com/file/d/1m5AQNpwVyVJZgG2mV5y1cr_zZy2Wd4Ia">Phishing (Udemy)</a> <br />
+                        <a href="https://drive.google.com/file/d/1fZkKVfkH2b8hdHUTC17QIqQX_x-1SZnE">Introduction to Growth Hacking (Udemy)</a>
                       </p>
-                    </div>
-                    <div className="col-md-6 floatLeft">
-                      <span className="left">Front-End Development</span>
-                      <Progress percent={90} />
-                      <span className="left top15">Back-End Development</span>
-                      <Progress percent={70} />
-                      <span className="left top15">Photoshop</span>
-                      <Progress percent={75} />
-                      <span className="left top15">Desktop Development</span>
-                      <Progress percent={65} />
-                      <span className="left top15">Web App Development</span>
-                      <Progress percent={85} />
                     </div>
                   </div>
                 </div>  
