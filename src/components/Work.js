@@ -12,21 +12,21 @@ function Work() {
                 <div class="triangle-right" />
                 <div class="circle-right" />
                 <h5>Computer Technician Internship</h5>
-                <h6>SISTEMI HARDWARE COMITEC</h6>
+                <h6>SISTEMI HARDWARE COMITEC - San Donà di Piave (Italy)</h6>
                 <p id="welcome"><span>jun 2014 - aug 2014</span></p>
               </div>
               <div className="col-md-6 col-sm-12 milestone shadow firstEducation rightEducation doubleLine padua">
                 <div class="triangle-left" />
                 <div class="circle-left" />
                 <h5>Web Developer Internship</h5> 
-                <h6>LOVEKAIZEN CREATIVE AGENCY</h6>
+                <h6>LOVEKAIZEN CREATIVE AGENCY - London (United Kingdom)</h6>
                 <p id="welcome"><span>jun 2015 – aug 2015</span></p>
               </div>
               <div className="col-sm-6 milestone shadow leftEducation milan">
                 <div class="triangle-right" />
                 <div class="circle-right" />
-                <h5>Full Stack Developer Internship</h5>
-                <h6>CAPGEMINI ITALIA</h6>
+                <h5>IT Consultant Internship</h5>
+                <h6>CAPGEMINI ITALIA - Marcon (Italy)</h6>
                 <p id="welcome"><span>jun 2019 - jul 2019</span></p>
               </div>
               <div className="col-md-6 col-sm-12 milestone shadow firstEducation rightEducation lastEducation doubleLine future">
