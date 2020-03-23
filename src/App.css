@@ -450,3 +450,7 @@ button svg {
 .skillsDiv, .milestone {
   border-radius: 5px !important;
 }
+
+.triggerNotification{
+  display: none !important;
+}

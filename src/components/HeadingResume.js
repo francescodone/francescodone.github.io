@@ -10,7 +10,7 @@ function HeadingResume() {
         <div className="row">
           <div className="col-sm-12 top60">
             <div className="col-sm-4 left">
-              <h2>FRANCESCO DONÈ</h2>
+              <h2>FRANCESCO DONE'</h2>
               <p>Software Engineer</p>
             </div>
             <div className="col-sm-8 right">
