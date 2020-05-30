@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "ip": "^1.1.5",
+    "jquery": "^3.5.1",
     "react": "^16.8.6",
     "react-awesome-button": "^6.1.2",
     "react-dom": "^16.8.6",
