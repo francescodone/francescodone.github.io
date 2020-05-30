@@ -18,7 +18,7 @@ function HeadingInformations() {
       </div>
       <div className="col-sm-12 col-md-12 col-lg-7">
         <p id="welcome"><span>Hello & Welcome</span></p>
-        <h1 id="im">I'M <span className="colorized">FRANCESCO DONÈ</span></h1>
+        <h1 id="im">I'M <span className="colorized">FRANCESCO DONE'</span></h1>
         <p className="subTitle">Software Engineer</p>
         <hr />
         <div className="col-sm-2">
