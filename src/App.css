@@ -126,10 +126,10 @@ body {
   height: 50px;
   background: #355c7d;
   color: #fff;
-  width: 106%;
+  width: 106.1%;
   position: absolute;
   bottom: -51px;
-  left: -24px
+  left: -25px
 }
 
 .headingLinks .col-sm-2 {
@@ -155,6 +155,10 @@ a {
 
 .top60, .top60c {
   margin-top: 60px
+}
+
+.top90 {
+  margin-top: 90px;
 }
 
 .top60c {
@@ -324,6 +328,12 @@ button svg {
   top: 250px;
 }
 
+.copenhagen {
+  position: absolute;
+  top: 235px;
+  right: 16px;
+}
+
 .padua {
   position: absolute;
   right: 16px;
@@ -332,8 +342,13 @@ button svg {
 
 .future {
   position: absolute;
-  right: 16px;
+  top: 375px;
+}
+
+.future2 {
+  position: absolute;
   top: 235px;
+  right: 16px;
 }
 
 .shadow {
@@ -432,7 +447,7 @@ button svg {
   .imgDiv, #profilePhoto, .headingLinks {
     border-radius: 0px;
   }
-  .padua, .milan, .future {
+  .padua, .milan, .future, .copenhagen {
     position: inherit;
   }
   #info {

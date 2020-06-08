@@ -29,9 +29,16 @@ function Education() {
                 <h6>UNIVERSITY OF MILAN</h6>
                 <p id="welcome"><span>2019 - Present</span></p>
               </div>
-              <div className="col-md-6 col-sm-12 milestone shadow firstEducation rightEducation lastEducation doubleLine future">
+              <div className="col-md-6 col-sm-12 milestone shadow rightEducation copenhagen">
                 <div class="triangle-left" />
                 <div class="circle-left" />
+                <h5>Erasmus+</h5> 
+                <h6>UNIVERSITY OF COPENHAGEN</h6>
+                <p id="welcome"><span>2020 - 2021</span></p>
+              </div>
+              <div className="col-md-6 col-sm-12 milestone shadow firstEducation leftEducation lastEducation doubleLine future">
+                <div class="triangle-right" />
+                <div class="circle-right" />
                 <h5>░░░░░░░░░░░░░░░</h5> 
                 <h6>░░░░░░░░░░░░</h6>
                 <p id="welcome"><span>░░░ - ░░░</span></p>

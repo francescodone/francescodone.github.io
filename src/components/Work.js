@@ -4,7 +4,7 @@ function Work() {
   return (
 <div class="container work">
       <div className="row">
-        <div className="col-sm-12 top60c">
+        <div className="col-sm-12 top60c top90">
           <h2 className="colorized">WORK EXPERIENCE</h2>
           <div class="container">
             <div className="row">
@@ -29,7 +29,7 @@ function Work() {
                 <h6>CAPGEMINI ITALIA - Marcon (Italy)</h6>
                 <p id="welcome"><span>jun 2019 - jul 2019</span></p>
               </div>
-              <div className="col-md-6 col-sm-12 milestone shadow firstEducation rightEducation lastEducation doubleLine future">
+              <div className="col-md-6 col-sm-12 milestone shadow firstEducation rightEducation lastEducation doubleLine future2">
                 <div class="triangle-left" />
                 <div class="circle-left" />
                 <h5>░░░░░░░░░░░░░░░</h5> 
