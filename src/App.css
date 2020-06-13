@@ -387,9 +387,9 @@ button svg {
 }
 
 @media only screen and (max-width:991.5px) {
-  .top90 {
+  /*.top90 {
     margin-top: 60px;
-  }
+  }*/
   .leftEducation, .rightEducation {
     max-width: 325px
   }
