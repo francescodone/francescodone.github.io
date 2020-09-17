@@ -73,7 +73,7 @@ function HeadingInformations() {
         </div>
         <div className="headingLinks">
           <div className="col-sm-2 offset-sm-1"><a href="https://github.com/francescodone"><FaGithub /></a></div>
-          <div className="col-sm-2"><a href="https://www.linkedin.com/in/francesco-don%C3%A8-43b0a9173/"><FaLinkedin /></a></div>
+          <div className="col-sm-2"><a href="https://www.linkedin.com/in/francesco-done-43b0a9173/"><FaLinkedin /></a></div>
           <div className="col-sm-2"><a href="https://www.instagram.com/francesco_done/"><FaInstagram /></a></div>
           <div className="col-sm-2"><a href="mailto:francesco.done.11597@gmail.com"><FaGoogle /></a></div>
           <div className="col-sm-2"><a href="https://www.facebook.com/francesco.done"><FaFacebookF /></a></div>
