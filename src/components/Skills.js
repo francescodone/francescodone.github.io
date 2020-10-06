@@ -17,8 +17,8 @@ function Skills() {
                   <div className="col-sm-12 skillsDiv shadow">
                     <div className="col-md-6 floatLeft">
                       <p id="skillzResume">
-                        <span className="skillzTitle"><p><strong>Programming languages: </ strong></p></span>C++, Java, JavaScript, TypeScript, Game Maker Language, SQL.<br />
-                        <span className="skillzTitle"><p><strong>Tech frameworks and tools: </ strong></p></span>Photoshop, ReactJS, Redux, AngularJS, git, npm, NodeJS, jQuery, WordPress, Ethereum Network, Blockchain, REST, Spring, Hibernate, PostgreSQL, Maven, JPA, Flyway, LaTex.<br />
+                        <span className="skillzTitle"><p><strong>Programming languages: </ strong></p></span>C++, Java, Python, JavaScript, TypeScript, CUDA, Futhark, GML, SQL.<br />
+                        <span className="skillzTitle"><p><strong>Tech frameworks and tools: </ strong></p></span>Photoshop, Microsoft Office, Google Colab, ReactJS, Redux, AngularJS, git, npm, NodeJS, jQuery, WordPress, Ethereum Network, Blockchain, REST Services, Spring, Hibernate, PostgreSQL, Maven, JPA, Flyway, LaTex.<br />
                       </p>
                     </div>
                     <div className="col-md-6 floatLeft">
