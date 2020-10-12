@@ -48,7 +48,7 @@ function HeadingInformations() {
         </div>
         <div className="col-sm-10">
           <p>
-            <span>francesco.done.11597@gmail.com</span>
+            <span>contact.francescodone@gmail.com</span>
           </p>
         </div>
         <div className="col-sm-2">
