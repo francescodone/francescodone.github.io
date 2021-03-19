@@ -12,9 +12,9 @@ function Home() {
     <div className="container">
       <div className="row">
         <HeadingInformations />
-        <Skills />
+        {/*<Skills />
         <Education />
-        <Work />
+        <Work />*/}
       </div>
     </div>
     </div>
