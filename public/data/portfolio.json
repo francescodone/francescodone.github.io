@@ -1,0 +1,206 @@
+{
+  "personal": {
+    "name": "Francesco Done'",
+    "title": "Senior Frontend Engineer & Software Architect",
+    "tagline": "Collected notes on software, learning, places, and the curiosities between them.",
+    "bio": "From London to Munich — building the web, one city at a time.",
+    "autobiography": [
+      "My path through software has also been a path across Europe. It began with a first professional experience in London, continued through computer science studies in Padua and Milan, and expanded during an Erasmus exchange in Copenhagen.",
+      "After moving to Germany, I grew from frontend engineering into software architecture in Düsseldorf and Munich. Across every chapter, the constant has been curiosity: learning how systems work, how teams work together, and how technology can make complex experiences feel simple."
+    ]
+  },
+  "journey": [
+    {
+      "id": "step-1",
+      "year": "2015",
+      "type": "work",
+      "title": "Web Developer Intern",
+      "institution": "Lovekaizen Creative Agency",
+      "city": "London",
+      "country": "UK",
+      "lat": 51.51,
+      "lon": -0.13,
+      "description": "First professional experience abroad. Building websites for real clients, learning the craft of clean markup, and discovering that the web is built by people, not magic.",
+      "skills": ["HTML", "CSS", "JavaScript", "WordPress"],
+      "details": {
+        "highlights": [
+          "Built and maintained client websites for a creative agency",
+          "First professional exposure to version control and deployment workflows",
+          "Lived and worked independently in London at age 18"
+        ]
+      }
+    },
+    {
+      "id": "step-2",
+      "year": "2016 – 2019",
+      "type": "education",
+      "title": "BSc Computer Science",
+      "institution": "University of Padua",
+      "city": "Padua",
+      "country": "Italy",
+      "lat": 45.41,
+      "lon": 11.88,
+      "description": "Algorithms, data structures, and the fundamentals that shape how you think about problems forever. Focus on Software Engineering.",
+      "skills": ["Java", "C++", "Algorithms", "Software Engineering"],
+      "details": {
+        "highlights": [
+          "Grade: 97/110",
+          "Focus on Software Engineering",
+          "Summer internship at Capgemini (2019)"
+        ],
+        "courses": ["Data Structures", "Operating Systems", "Database Systems", "Software Engineering"],
+        "links": [
+          { "label": "Soldino — Software Engineering project (NodeJS, React, Solidity)", "url": "#", "icon": "github" }
+        ]
+      }
+    },
+    {
+      "id": "step-3",
+      "year": "2019 – 2021",
+      "type": "education",
+      "title": "MSc Computer Science",
+      "institution": "University of Milan",
+      "city": "Milan",
+      "country": "Italy",
+      "lat": 45.46,
+      "lon": 9.19,
+      "description": "Diving deep into Artificial Intelligence, AGI, and Human-Computer Interaction. A thesis that bridged neuroscience with reinforcement learning.",
+      "skills": ["AI", "Machine Learning", "PyTorch", "Reinforcement Learning"],
+      "details": {
+        "highlights": [
+          "Grade: 106/110",
+          "Focus on Artificial Intelligence with foundations on AGI and HCI",
+          "Erasmus semester at University of Copenhagen (2020–2021)",
+          "Scrum Master & Software Engineer at IT Cube Consulting (2021)"
+        ],
+        "papers": [
+          { "label": "Analysis of recurrent models of visual attention with reinforcement learning — Master Thesis", "url": "#", "icon": "pdf" }
+        ],
+        "courses": ["Natural Language Processing", "Reinforcement Learning", "Computer Vision", "Human-Computer Interaction"],
+        "links": [
+          { "label": "Question Answering system (PyTorch)", "url": "#", "icon": "github" },
+          { "label": "Local-Volatility Calibration (CUDA, C++)", "url": "#", "icon": "github" }
+        ]
+      }
+    },
+    {
+      "id": "step-4",
+      "year": "2020 – 2021",
+      "type": "education",
+      "title": "Erasmus Exchange",
+      "institution": "University of Copenhagen",
+      "city": "Copenhagen",
+      "country": "Denmark",
+      "lat": 55.68,
+      "lon": 12.57,
+      "description": "A semester in Scandinavia to broaden perspectives. Software Engineering and AI in a new academic culture, sharpening both technical and cross-cultural skills.",
+      "skills": ["Software Engineering", "AI", "NLP", "Cross-cultural collaboration"],
+      "details": {
+        "highlights": [
+          "Focus on Software Engineering and Artificial Intelligence",
+          "Collaborated with international teams on research projects",
+          "Experienced a different academic culture and teaching methodology"
+        ]
+      }
+    },
+    {
+      "id": "step-5",
+      "year": "2021 – 2023",
+      "type": "work",
+      "title": "Frontend Engineer",
+      "institution": "Acolad Digital",
+      "city": "Düsseldorf",
+      "country": "Germany",
+      "lat": 51.23,
+      "lon": 6.78,
+      "description": "Moving to Germany and diving into enterprise-scale frontend development. Building digital experiences and growing into a confident engineer in an international team.",
+      "skills": ["Vue.js", "TypeScript", "Adobe Analytics", "CI/CD"],
+      "details": {
+        "highlights": [
+          "Full-time frontend engineer in a hybrid international environment",
+          "Earned Adobe Analytics Developer Professional certification (AD0-E213)",
+          "EFSET C2 Proficient English certification"
+        ],
+        "awards": [
+          { "title": "AD0-E213 Adobe Analytics Developer Professional", "issuer": "Adobe", "year": "2022" },
+          { "title": "EFSET C2 Proficient English", "issuer": "EF", "year": "2021" }
+        ]
+      }
+    },
+    {
+      "id": "step-6",
+      "year": "2023 – Present",
+      "type": "work",
+      "title": "Senior Frontend Engineer & Software Architect",
+      "institution": "Mercedes-Benz.io",
+      "city": "Munich",
+      "country": "Germany",
+      "lat": 48.14,
+      "lon": 11.58,
+      "description": "Architecting the digital showroom for Mercedes-Benz. Designing scalable BFF architectures, leading micro-frontend migrations, pioneering AI-driven development, and recognized as most impactful employee.",
+      "skills": ["Architecture", "Vue.js", "AI Agents", "Kubernetes", "Datadog", "Terraform"],
+      "details": {
+        "highlights": [
+          "Recognised as most impactful employee in the company in 2024 and 2025",
+          "Designed an AG-UI interface with custom AI agents for the digital showroom",
+          "Architected a Generative Engine Optimization (GEO) data pipeline for vehicle discoverability across LLMs",
+          "Designed and implemented a scalable Backend-for-Frontend (BFF) architecture",
+          "Introduced error budget policies aligning reliability with development velocity",
+          "Led SSR integration in a Vue3–AEM environment",
+          "Led Micro Frontend migration involving 40+ developers across 6 FE teams",
+          "Reduced bundle size by over 80%",
+          "Implemented FE monitoring with Datadog and Terraform, enabling On-Call-Duty across teams",
+          "Lowered CLS to quasi-0 in AEM environment"
+        ],
+        "awards": [
+          { "title": "Most Impactful Employee", "issuer": "Mercedes-Benz.io", "year": "2024" },
+          { "title": "Most Impactful Employee", "issuer": "Mercedes-Benz.io", "year": "2025" },
+          { "title": "Goethe B1 Conversational German", "issuer": "Goethe-Institut", "year": "2025" }
+        ],
+        "links": [
+          { "label": "GitHub profile", "url": "https://github.com/francescodone", "icon": "github" },
+          { "label": "LinkedIn", "url": "https://linkedin.com/in/francescodone", "icon": "link" }
+        ]
+      }
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "title": "Portfolio",
+      "description": "This very site — a scroll-driven editorial journey built with React, GSAP, and Framer Motion.",
+      "tech": ["React", "GSAP", "Framer Motion", "TypeScript"],
+      "url": "https://francescodone.github.io",
+      "github": "https://github.com/francescodone/francescodone.github.io"
+    },
+    {
+      "id": "proj-2",
+      "title": "Visual Attention & RL",
+      "description": "Master thesis — analysis of recurrent models of visual attention using reinforcement learning, bridging AGI, HCI, and neuroscience.",
+      "tech": ["PyTorch", "Reinforcement Learning", "Python"],
+      "url": "",
+      "github": ""
+    },
+    {
+      "id": "proj-3",
+      "title": "Soldino",
+      "description": "Decentralized application for micro-payments built with blockchain technology for Red Babel.",
+      "tech": ["NodeJS", "React", "Redux", "Solidity", "Web3"],
+      "url": "",
+      "github": ""
+    },
+    {
+      "id": "proj-4",
+      "title": "Local-Volatility Calibration",
+      "description": "GPU-accelerated financial modeling using massively parallel computation on CUDA.",
+      "tech": ["CUDA", "C++", "Parallel Computing"],
+      "url": "",
+      "github": ""
+    }
+  ],
+  "contact": {
+    "email": "contact.francescodone@gmail.com",
+    "github": "https://github.com/francescodone",
+    "linkedin": "https://linkedin.com/in/francescodone"
+  }
+}
