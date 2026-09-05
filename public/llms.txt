@@ -1,0 +1,18 @@
+# Francesco Done'
+
+> Senior Frontend Engineer and Software Architect based in Munich, Germany. This site is a personal encyclopedia covering professional experience, academic work, technical expertise, and selected projects.
+
+## Primary profile
+
+- [Professional profile](https://francescodone.github.io/profile.md): Concise, text-first career, education, skills, recognition, and project information.
+- [Structured portfolio data](https://francescodone.github.io/data/portfolio.json): Complete portfolio content as JSON, including roles, education, skills, highlights, awards, projects, and contact links.
+- [Interactive portfolio](https://francescodone.github.io/): The canonical human-facing portfolio.
+
+## Professional profiles
+
+- [GitHub](https://github.com/francescodone): Public code and repositories.
+- [LinkedIn](https://linkedin.com/in/francescodone): Professional profile.
+
+## Core topics
+
+Frontend engineering, software architecture, Vue.js, TypeScript, AI agents, AG-UI, micro-frontends, server-side rendering, web performance, Kubernetes, Datadog, Terraform, artificial intelligence, machine learning, and reinforcement learning.
