@@ -2,22 +2,27 @@
   "personal": {
     "name": "Francesco Done'",
     "title": "Senior Frontend Engineer & Software Architect",
-    "tagline": "Collected notes on software, learning, places, and the curiosities between them.",
+    "tagline": "Building scalable platforms, guiding engineering teams, and turning complex systems into reliable user experiences.",
     "bio": "From London to Munich — building the web, one city at a time.",
     "autobiography": [
       "My path through software has also been a path across Europe. It began with a first professional experience in London, continued through computer science studies in Padua and Milan, and expanded during an Erasmus exchange in Copenhagen.",
-      "After moving to Germany, I grew from frontend engineering into software architecture in Düsseldorf and Munich. Across every chapter, the constant has been curiosity: learning how systems work, how teams work together, and how technology can make complex experiences feel simple."
+      "After moving to Germany, I grew from frontend engineering into software architecture in Berlin and Stuttgart. Across every chapter, the constant has been curiosity: learning how systems work, how teams work together, and how technology can make complex experiences feel simple. I speak four languages — Italian, English, German, and Spanish — which helps me connect across cultures and perspectives. I have also been running since childhood, a discipline that shaped the competitive mindset I bring to everything I do."
+    ],
+    "recommendedBooks": [
+      { "title": "The Culture Map", "author": "Erin Meyer" },
+      { "title": "Weapons of Math Destruction", "author": "Cathy O'Neil" },
+      { "title": "Emotional Intelligence", "author": "Daniel Goleman" }
     ]
   },
   "journey": [
     {
       "id": "step-1",
-      "year": "2015",
+      "year": "Jun 2015 – Aug 2015",
       "type": "work",
       "title": "Web Developer Intern",
       "institution": "Lovekaizen Creative Agency",
       "city": "London",
-      "country": "UK",
+      "country": "United Kingdom",
       "lat": 51.51,
       "lon": -0.13,
       "description": "First professional experience abroad. Building websites for real clients, learning the craft of clean markup, and discovering that the web is built by people, not magic.",
@@ -51,6 +56,25 @@
         "courses": ["Data Structures", "Operating Systems", "Database Systems", "Software Engineering"],
         "links": [
           { "label": "Soldino — Software Engineering project (NodeJS, React, Solidity)", "url": "#", "icon": "github" }
+        ]
+      }
+    },
+    {
+      "id": "capgemini-2019",
+      "year": "Jun 2019 – Aug 2019",
+      "type": "work",
+      "title": "Software Engineer",
+      "institution": "Capgemini",
+      "city": "Marcon (On-site)",
+      "country": "Italy",
+      "lat": 45.56,
+      "lon": 12.3,
+      "description": "A three-month software engineering internship in a large consulting environment, applying university foundations in a professional team.",
+      "skills": ["Software Engineering", "Team Collaboration"],
+      "details": {
+        "highlights": [
+          "Completed a three-month software engineering internship during the BSc",
+          "Worked on-site with a professional consulting team in Marcon, Veneto"
         ]
       }
     },
@@ -104,15 +128,34 @@
       }
     },
     {
+      "id": "itcube-2021",
+      "year": "Feb 2021 – Jul 2021",
+      "type": "work",
+      "title": "Software Engineer",
+      "institution": "ITCube Consulting Srl",
+      "city": "Milan (Hybrid)",
+      "country": "Italy",
+      "lat": 45.46,
+      "lon": 9.19,
+      "description": "Working in software engineering and agile delivery within a hybrid consulting team while completing postgraduate studies.",
+      "skills": ["Software Engineering", "Scrum", "Agile Delivery"],
+      "details": {
+        "highlights": [
+          "Worked full-time as a software engineer in a hybrid consulting environment",
+          "Served as Scrum Master alongside software engineering responsibilities"
+        ]
+      }
+    },
+    {
       "id": "step-5",
-      "year": "2021 – 2023",
+      "year": "Oct 2021 – Feb 2023",
       "type": "work",
       "title": "Frontend Engineer",
       "institution": "Acolad Digital",
-      "city": "Düsseldorf",
+      "city": "Berlin (Hybrid)",
       "country": "Germany",
-      "lat": 51.23,
-      "lon": 6.78,
+      "lat": 52.52,
+      "lon": 13.405,
       "description": "Moving to Germany and diving into enterprise-scale frontend development. Building digital experiences and growing into a confident engineer in an international team.",
       "skills": ["Vue.js", "TypeScript", "Adobe Analytics", "CI/CD"],
       "details": {
@@ -129,19 +172,19 @@
     },
     {
       "id": "step-6",
-      "year": "2023 – Present",
+      "year": "Mar 2023 – Present",
       "type": "work",
       "title": "Senior Frontend Engineer & Software Architect",
       "institution": "Mercedes-Benz.io",
-      "city": "Munich",
+      "city": "Stuttgart (Hybrid)",
       "country": "Germany",
-      "lat": 48.14,
-      "lon": 11.58,
-      "description": "Architecting the digital showroom for Mercedes-Benz. Designing scalable BFF architectures, leading micro-frontend migrations, pioneering AI-driven development, and recognized as most impactful employee.",
+      "lat": 48.7758,
+      "lon": 9.1829,
+      "description": "Architecting the digital showroom for Mercedes-Benz. Designing scalable BFF architectures, leading micro-frontend migrations, pioneering AI-driven development, and receiving the Impact Award in 2024 and 2025.",
       "skills": ["Architecture", "Vue.js", "AI Agents", "Kubernetes", "Datadog", "Terraform"],
       "details": {
         "highlights": [
-          "Recognised as most impactful employee in the company in 2024 and 2025",
+          "Received the Impact Award in 2024 and 2025",
           "Designed an AG-UI interface with custom AI agents for the digital showroom",
           "Architected a Generative Engine Optimization (GEO) data pipeline for vehicle discoverability across LLMs",
           "Designed and implemented a scalable Backend-for-Frontend (BFF) architecture",
@@ -153,18 +196,29 @@
           "Lowered CLS to quasi-0 in AEM environment"
         ],
         "awards": [
-          { "title": "Most Impactful Employee", "issuer": "Mercedes-Benz.io", "year": "2024" },
-          { "title": "Most Impactful Employee", "issuer": "Mercedes-Benz.io", "year": "2025" },
-          { "title": "Goethe B1 Conversational German", "issuer": "Goethe-Institut", "year": "2025" }
+          { "title": "Impact Award", "issuer": "Mercedes-Benz.io", "year": "2025" },
+          { "title": "Goethe B1 Conversational German", "issuer": "Goethe-Institut", "year": "2025" },
+          { "title": "Impact Award", "issuer": "Mercedes-Benz.io", "year": "2024" }
         ],
-        "recognitionImage": {
-          "src": "/_LOR3336-web.jpeg",
-          "alt": "Francesco Done' receiving the Impact Award at Mercedes-Benz.io",
-          "caption": "The Impact Award with the Managing Directors · October 2025"
-        },
-        "links": [
-          { "label": "GitHub profile", "url": "https://github.com/francescodone", "icon": "github" },
-          { "label": "LinkedIn", "url": "https://linkedin.com/in/francescodone", "icon": "link" }
+        "recognitionImages": [
+          {
+            "src": "/_LOR3336-web.jpeg",
+            "alt": "Francesco Done' receiving the Impact Award at Mercedes-Benz.io",
+            "caption": "The Impact Award with the Managing Directors · October 2025",
+            "year": "2025"
+          },
+          {
+            "src": "/1759038310889.jpeg",
+            "alt": "Impact Award 2025 certificate awarded to Francesco Done'",
+            "caption": "Impact Award 2025",
+            "year": "2025"
+          },
+          {
+            "src": "/1738570645479.jpeg",
+            "alt": "Impact Award 2024 certificate awarded to Francesco Done'",
+            "caption": "Impact Award 2024",
+            "year": "2024"
+          }
         ]
       }
     }

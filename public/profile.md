@@ -17,7 +17,7 @@ Francesco Done' is a Senior Frontend Engineer and Software Architect focused on 
 
 My path through software has also been a path across Europe. It began with a first professional experience in London, continued through computer science studies in Padua and Milan, and expanded during an Erasmus exchange in Copenhagen.
 
-After moving to Germany, I grew from frontend engineering into software architecture in Düsseldorf and Munich. Across every chapter, the constant has been curiosity: learning how systems work, how teams work together, and how technology can make complex experiences feel simple.
+After moving to Germany, I grew from frontend engineering into software architecture in Berlin and Stuttgart. Across every chapter, the constant has been curiosity: learning how systems work, how teams work together, and how technology can make complex experiences feel simple. I speak four languages — Italian, English, German, and Spanish — which helps me connect across cultures and perspectives. I have also been running since childhood, a discipline that shaped the competitive mindset I bring to everything I do.
 
 ## Core expertise
 
@@ -54,9 +54,9 @@ Selected highlights:
 
 Recognition:
 
-- Most Impactful Employee, Mercedes-Benz.io, 2024
-- Most Impactful Employee, Mercedes-Benz.io, 2025
+- Impact Award, Mercedes-Benz.io, 2025
 - Goethe B1 Conversational German, Goethe-Institut, 2025
+- Impact Award, Mercedes-Benz.io, 2024
 
 ### Frontend Engineer — Acolad Digital
 

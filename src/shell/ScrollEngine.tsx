@@ -2,7 +2,7 @@ import { useEffect, useRef, type ReactNode } from 'react'
 import Lenis from 'lenis'
 import { gsap, ScrollTrigger } from '@shared/utils/gsap-setup'
 import { useScrollContext } from '@shared/contexts/ScrollContext'
-import { BOOK_DRAG_SCROLL_EVENT, TOTAL_SCROLL_HEIGHT } from '@shared/tokens/design-tokens'
+import { BOOK_DRAG_SCROLL_EVENT, TOTAL_MOBILE_BOOK_STOPS, TOTAL_SCROLL_HEIGHT } from '@shared/tokens/design-tokens'
 
 export function ScrollEngine({ children }: { children: ReactNode }) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -25,6 +25,21 @@ export function ScrollEngine({ children }: { children: ReactNode }) {
       lenis.scrollTo(target, { immediate, duration, force: true })
     }
     window.addEventListener(BOOK_DRAG_SCROLL_EVENT, handleBookDragScroll)
+
+    let snapTimer: ReturnType<typeof setTimeout> | undefined
+    const snapMobileScroll = () => {
+      if (!window.matchMedia('(max-width: 767px)').matches) return
+      clearTimeout(snapTimer)
+      snapTimer = setTimeout(() => {
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight
+        if (maxScroll <= 0) return
+        const step = Math.round((window.scrollY / maxScroll) * TOTAL_MOBILE_BOOK_STOPS)
+        const target = (step / TOTAL_MOBILE_BOOK_STOPS) * maxScroll
+        if (Math.abs(target - window.scrollY) <= 1) return
+        lenis.scrollTo(target, { duration: 0.35, force: true })
+      }, 180)
+    }
+    window.addEventListener('scroll', snapMobileScroll, { passive: true })
 
     const containWheelToPages = (event: WheelEvent) => {
       if (!event.ctrlKey && (!(event.target instanceof Element) || !event.target.closest(wheelScrollSelector))) {
@@ -50,7 +65,9 @@ export function ScrollEngine({ children }: { children: ReactNode }) {
     })
 
     return () => {
+      clearTimeout(snapTimer)
       window.removeEventListener(BOOK_DRAG_SCROLL_EVENT, handleBookDragScroll)
+      window.removeEventListener('scroll', snapMobileScroll)
       window.removeEventListener('wheel', containWheelToPages, { capture: true })
       trigger.kill()
       lenis.destroy()

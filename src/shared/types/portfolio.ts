@@ -1,9 +1,15 @@
+export interface BookRecommendation {
+  title: string
+  author: string
+}
+
 export interface PersonalInfo {
   name: string
   title: string
   tagline: string
   bio: string
   autobiography: string[]
+  recommendedBooks: BookRecommendation[]
 }
 
 export interface StepLink {
@@ -22,6 +28,7 @@ export interface StepImage {
   src: string
   alt: string
   caption?: string
+  year?: string
 }
 
 export interface StepDetail {
@@ -29,7 +36,7 @@ export interface StepDetail {
   links?: StepLink[]
   papers?: StepLink[]
   awards?: StepAward[]
-  recognitionImage?: StepImage
+  recognitionImages?: StepImage[]
   courses?: string[]
   responsibilities?: string[]
 }

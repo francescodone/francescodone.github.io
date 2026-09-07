@@ -158,10 +158,12 @@ function LinksList({ items }: { items: StepLink[] }) {
 }
 
 function AwardsList({ items }: { items: StepAward[] }) {
+  const sortedItems = [...items].sort((a, b) => Number(b.year ?? 0) - Number(a.year ?? 0))
+
   return (
     <div className="flex flex-col gap-3">
-      {items.map((award, i) => (
-        <div key={i} className="flex items-start gap-2.5">
+      {sortedItems.map((award) => (
+        <div key={`${award.title}-${award.issuer ?? ''}-${award.year ?? ''}`} className="flex items-start gap-2.5">
           <span className="mt-0.5 shrink-0" style={{ color: 'var(--award-color)' }}><IconAward /></span>
           <div>
             <span
