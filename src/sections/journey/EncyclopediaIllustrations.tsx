@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react'
+import { useLayoutEffect, useRef, type CSSProperties, type ReactNode } from 'react'
 
 /**
  * Vintage encyclopedia-style SVG illustrations with engraving detail:
@@ -26,6 +26,68 @@ function Wrapper({ children, style, className, flip }: IllustrationProps & { chi
       {children}
     </div>
   )
+}
+
+export function AnimatedDrawing({ children, className }: { children: ReactNode; className?: string }) {
+  const rootRef = useRef<HTMLDivElement>(null)
+
+  useLayoutEffect(() => {
+    const root = rootRef.current
+    const page = root?.closest<HTMLElement>('[data-page-active], .mobile-book-page')
+    if (!root || !page) return
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const strokes = [...root.querySelectorAll<SVGGeometryElement>('path, line, circle, ellipse, rect, polygon, polyline')]
+      .filter((element) => !element.closest('defs') && getComputedStyle(element).stroke !== 'none')
+      .map((element, index) => {
+        const length = element.getTotalLength()
+        const offset = `${index % 3 === 0 ? -length : length}`
+        element.style.strokeDasharray = `${length} ${length}`
+        element.style.strokeDashoffset = reducedMotion ? '0' : offset
+        return { element, length, offset, index }
+      })
+
+    let active = false
+    let animations: Animation[] = []
+    const update = () => {
+      const nextActive = page.dataset.pageActive === 'true' || page.getAttribute('aria-hidden') === 'false'
+      if (nextActive === active) return
+      active = nextActive
+      animations.forEach((animation) => animation.cancel())
+      animations = []
+
+      if (!active || reducedMotion) {
+        strokes.forEach(({ element, offset }) => {
+          element.style.strokeDashoffset = active ? '0' : offset
+        })
+        return
+      }
+
+      animations = strokes.map(({ element, length, offset, index }) => {
+        element.style.strokeDashoffset = offset
+        return element.animate(
+          [{ strokeDashoffset: offset }, { strokeDashoffset: '0' }],
+          {
+            duration: 560 + Math.min(length * 2.2, 720),
+            delay: Math.min(index * 22, 880),
+            easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
+            fill: 'forwards',
+          },
+        )
+      })
+    }
+
+    const observer = new MutationObserver(update)
+    observer.observe(page, { attributes: true, attributeFilter: ['aria-hidden', 'data-page-active'] })
+    update()
+
+    return () => {
+      observer.disconnect()
+      animations.forEach((animation) => animation.cancel())
+    }
+  }, [])
+
+  return <div ref={rootRef} className={className} aria-hidden="true">{children}</div>
 }
 
 /* ═══════════════════════════════════════════════

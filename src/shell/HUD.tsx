@@ -12,7 +12,6 @@ const THEME_CYCLE: ThemeMode[] = ['light', 'dark', 'system']
 const FONT_SCALE_STEPS = [0.875, 1, 1.125, 1.25]
 const FONT_SCALE_STORAGE_KEY = 'portfolio-font-scale'
 const SEARCH_QUERY_STORAGE_KEY = 'portfolio-search-query'
-const MOBILE_TWO_SIDED_SPREADS = [2, 4, 5, 6, 8, 9, 10, 12]
 
 function getInitialFontScale(): number {
   if (typeof window === 'undefined') return 1
@@ -25,12 +24,16 @@ function getInitialSearchQuery(): string {
   return (localStorage.getItem(SEARCH_QUERY_STORAGE_KEY) ?? '').slice(0, 80)
 }
 
-function getStartYear(year: string): number {
-  return Number(year.match(/\d{4}/)?.[0] ?? 0)
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+function getStartDate(date: string): number {
+  const match = date.match(/^(?:(\w{3})\s+)?(\d{4})/)
+  if (!match) return 0
+  return Number(match[2]) * 12 + Math.max(0, MONTHS.indexOf(match[1]))
 }
 
-function getMobilePageIndex(spreadIndex: number): number {
-  return spreadIndex + MOBILE_TWO_SIDED_SPREADS.filter((index) => index < spreadIndex).length
+function getMobilePageIndex(spreadIndex: number, twoSidedSpreads: readonly number[]): number {
+  return spreadIndex + twoSidedSpreads.filter((index) => index < spreadIndex).length
 }
 
 function getJourneySearchContent(step: JourneyStep): string {
@@ -204,6 +207,7 @@ export function HUD() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState(getInitialSearchQuery)
   const [isPageTurning, setIsPageTurning] = useState(false)
+  const [isCvGenerating, setIsCvGenerating] = useState(false)
   const [controlsReady, setControlsReady] = useState(false)
   const searchButtonRef = useRef<HTMLButtonElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
@@ -275,7 +279,7 @@ export function HUD() {
     let raf: number
     const tick = () => {
       const current = stateRef.current
-      setActiveStep(Math.min(totalStops - 1, Math.floor(current.progress * totalStops)))
+      setActiveStep(Math.min(totalStops, Math.round(current.progress * totalStops)))
       setProgressState(current.progress)
       raf = requestAnimationFrame(tick)
     }
@@ -285,9 +289,9 @@ export function HUD() {
 
   const scrollToStep = (index: number, durationOverride?: number) => {
     clearSearchHighlights()
-    const targetIndex = Math.min(totalStops - 1, Math.max(0, index))
+    const targetIndex = Math.min(totalStops, Math.max(0, index))
     const totalHeight = document.documentElement.scrollHeight - window.innerHeight
-    const targetScroll = targetIndex === 0 ? 0 : ((targetIndex + 0.02) / totalStops) * totalHeight
+    const targetScroll = (targetIndex / totalStops) * totalHeight
     const distance = Math.abs(targetIndex - activeStep)
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const duration = durationOverride ?? Math.min(2.8, 1.15 + distance * 0.2)
@@ -298,8 +302,8 @@ export function HUD() {
 
   const navigateOnePage = (direction: -1 | 1) => {
     if (pageTurnLockRef.current) return
-    const currentStep = Math.min(totalStops - 1, Math.max(0, Math.round(stateRef.current.progress * totalStops)))
-    const targetStep = Math.min(totalStops - 1, Math.max(0, currentStep + direction))
+    const currentStep = Math.min(totalStops, Math.max(0, Math.round(stateRef.current.progress * totalStops)))
+    const targetStep = Math.min(totalStops, Math.max(0, currentStep + direction))
     if (targetStep === currentStep) return
 
     const duration = direction === 1 ? 2.1 : 1.35
@@ -325,12 +329,25 @@ export function HUD() {
     setFontScale(FONT_SCALE_STEPS[nextIndex])
   }
 
+  const downloadCv = async () => {
+    if (!data || isCvGenerating) return
+    setIsCvGenerating(true)
+    try {
+      const { downloadCvPdf } = await import('@shared/utils/generate-cv-pdf')
+      await downloadCvPdf(data)
+    } catch {
+      window.alert('Unable to generate the CV. Please try again.')
+    } finally {
+      setIsCvGenerating(false)
+    }
+  }
+
   const workSteps = (data?.journey ?? [])
     .filter((step) => step.type === 'work')
-    .sort((a, b) => getStartYear(b.year) - getStartYear(a.year))
+    .sort((a, b) => getStartDate(b.year) - getStartDate(a.year))
   const academicSteps = (data?.journey ?? [])
     .filter((step) => step.type === 'education')
-    .sort((a, b) => getStartYear(b.year) - getStartYear(a.year))
+    .sort((a, b) => getStartDate(b.year) - getStartDate(a.year))
   const autobiographyChapter = 1
   const autobiographyStep = 2
   const professionalChapter = 3
@@ -340,6 +357,7 @@ export function HUD() {
   const beyondWorkChapter = academicStart + academicSteps.length
   const miscStep = beyondWorkChapter + 1
   const contactStep = miscStep + 1
+  const mobileTwoSidedSpreads = [autobiographyStep, miscStep]
   const desktopStepLabels = [
     'Cover',
     'Chapter 1: Autobiography',
@@ -358,9 +376,9 @@ export function HUD() {
     'My Story · I',
     'My Story · II',
     'Chapter 2: Professional Journey',
-    ...workSteps.flatMap((step) => [`${step.institution} · Profile`, `${step.institution} · Notes`]),
+    ...workSteps.map((step) => step.institution),
     'Chapter 3: Education',
-    ...academicSteps.flatMap((step) => [`${step.institution} · Profile`, `${step.institution} · Notes`]),
+    ...academicSteps.map((step) => step.institution),
     'Chapter 4: Beyond Work',
     'Field Notes · I',
     'Field Notes · II',
@@ -428,7 +446,7 @@ export function HUD() {
       id: 'misc',
       title: 'Field Notes',
       subtitle: 'Chapter 4 · Field notes',
-      content: 'Sport & movement Practice endurance and the value of staying in motion Travel & places Observations gathered across cities cultures and changing perspectives Mindset Principles for learning building collaborating and handling uncertainty Bookshelf Books essays and references that are worth recommending Languages Language learning as a tool for connection and cultural understanding Curiosities Experiments interests and ideas that do not belong in a résumé',
+      content: `Sport & movement Practice endurance and the value of staying in motion Travel & places Observations gathered across cities cultures and changing perspectives Mindset Principles for learning building collaborating and handling uncertainty Books I recommend ${data.personal.recommendedBooks.map((book) => `${book.title} ${book.author}`).join(' ')} Languages Language learning as a tool for connection and cultural understanding Curiosities Experiments interests and ideas that do not belong in a résumé`,
       step: miscStep,
     },
     {
@@ -450,9 +468,9 @@ export function HUD() {
 
   const selectSearchResult = (entry: SearchEntry) => {
     const query = searchQuery
-    const navigationStep = isMobile ? getMobilePageIndex(entry.step) : entry.step
+    const navigationStep = isMobile ? getMobilePageIndex(entry.step, mobileTwoSidedSpreads) : entry.step
     const totalHeight = document.documentElement.scrollHeight - window.innerHeight
-    const target = navigationStep === 0 ? 0 : ((navigationStep + 0.02) / totalStops) * totalHeight
+    const target = (navigationStep / totalStops) * totalHeight
     setSearchOpen(false)
     window.setTimeout(() => {
       window.dispatchEvent(new CustomEvent(BOOK_DRAG_SCROLL_EVENT, { detail: { target, immediate: true } }))
@@ -513,17 +531,18 @@ export function HUD() {
         >
           <ThemeIcon mode={mode} />
         </button>
-        <a
-          href="/francesco-done-cv.pdf"
-          download="Francesco-Done-CV.pdf"
-          type="application/pdf"
-          className="w-[50px] h-[50px] shrink-0 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95"
+        <button
+          type="button"
+          onClick={downloadCv}
+          disabled={!data || isCvGenerating}
+          className="w-[50px] h-[50px] shrink-0 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 disabled:pointer-events-none disabled:cursor-wait disabled:opacity-50 disabled:hover:scale-100"
           style={controlStyle}
-          aria-label="Download CV as PDF"
-          title="Download CV (PDF)"
+          aria-label={isCvGenerating ? 'Generating CV as PDF' : 'Download CV as PDF'}
+          aria-busy={isCvGenerating}
+          title={isCvGenerating ? 'Generating CV…' : 'Download CV (PDF)'}
         >
           <DownloadIcon />
-        </a>
+        </button>
       </div>
 
       <AnimatePresence>
@@ -679,7 +698,7 @@ export function HUD() {
         <button
           type="button"
           onClick={() => navigateOnePage(1)}
-          disabled={isPageTurning || activeStep === totalStops - 1}
+          disabled={isPageTurning || activeStep === totalStops}
           className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full cursor-pointer transition-[transform,opacity] duration-[350ms] ease-out hover:scale-110 active:scale-[0.96] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-[0.55] disabled:hover:scale-100 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]"
           style={controlStyle}
           aria-label="Next page"
@@ -745,7 +764,7 @@ export function HUD() {
             className="text-[10px] tracking-[0.12em]"
             style={{ color: 'var(--text-quaternary)', fontFamily: 'var(--font-mono)' }}
           >
-            {String(activeStep + 1).padStart(2, '0')}/{String(totalStops).padStart(2, '0')}
+            {String(activeStep + 1).padStart(2, '0')}/{String(totalStops + 1).padStart(2, '0')}
           </span>
           <p
             className="text-[12px] mt-0.5"

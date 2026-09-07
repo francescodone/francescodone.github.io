@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode, type WheelEvent as ReactWheelEvent } from 'react'
 import { usePortfolio } from '@shared/contexts/PortfolioContext'
 import { useScrollContext } from '@shared/contexts/ScrollContext'
-import { BookPage } from '@sections/journey/BookPage'
+import type { BookRecommendation } from '@shared/types/portfolio'
+import { BookPage, MobileJourneyPage } from '@sections/journey/BookPage'
 import { BOOK_DRAG_SCROLL_EVENT, TOTAL_BOOK_STOPS, TOTAL_MOBILE_BOOK_STOPS } from '@shared/tokens/design-tokens'
-import { Flourish } from '@sections/journey/EncyclopediaIllustrations'
+import { AnimatedDrawing, Flourish } from '@sections/journey/EncyclopediaIllustrations'
 
 const TOTAL_STOPS = TOTAL_BOOK_STOPS
 
@@ -11,13 +12,14 @@ interface BookSpread {
   key: string
   left: ReactNode
   right: ReactNode
+  mobile?: ReactNode
 }
 
 interface MobilePage {
   key: string
   content: ReactNode
   spreadIndex: number
-  side: 'left' | 'right'
+  side: 'left' | 'right' | 'single'
 }
 
 /**
@@ -137,8 +139,8 @@ export function Book() {
 
     if (completedHorizontalDrag) {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight
-      const step = Math.min(totalStops - 1, Math.max(0, Math.round((window.scrollY / maxScroll) * totalStops)))
-      const target = step === 0 ? 0 : ((step + 0.02) / totalStops) * maxScroll
+      const step = Math.min(totalStops, Math.max(0, Math.round((window.scrollY / maxScroll) * totalStops)))
+      const target = (step / totalStops) * maxScroll
       const immediate = window.matchMedia('(prefers-reduced-motion: reduce)').matches
       window.dispatchEvent(new CustomEvent(BOOK_DRAG_SCROLL_EVENT, {
         detail: { target, immediate, duration: 0.45 },
@@ -178,10 +180,10 @@ export function Book() {
 
   const workSteps = data.journey
     .filter((step) => step.type === 'work')
-    .sort((a, b) => getStartYear(b.year) - getStartYear(a.year))
+    .sort((a, b) => getStartDate(b.year) - getStartDate(a.year))
   const academicSteps = data.journey
     .filter((step) => step.type === 'education')
-    .sort((a, b) => getStartYear(b.year) - getStartYear(a.year))
+    .sort((a, b) => getStartDate(b.year) - getStartDate(a.year))
   spreads.push({
     key: 'chapter-work',
     left: null,
@@ -193,6 +195,7 @@ export function Book() {
       key: step.id,
       left: <BookPage step={step} side="left" />,
       right: <BookPage step={step} side="right" />,
+      mobile: <MobileJourneyPage step={step} />,
     })
   })
 
@@ -207,6 +210,7 @@ export function Book() {
       key: step.id,
       left: <BookPage step={step} side="left" />,
       right: <BookPage step={step} side="right" />,
+      mobile: <MobileJourneyPage step={step} />,
     })
   })
 
@@ -219,7 +223,7 @@ export function Book() {
   spreads.push({
     key: 'misc',
     left: <MiscPage side="left" />,
-    right: <MiscPage side="right" />,
+    right: <MiscPage side="right" books={data.personal.recommendedBooks} />,
   })
 
   spreads.push({
@@ -230,6 +234,10 @@ export function Book() {
 
   const mobilePages: MobilePage[] = []
   spreads.forEach((spread, spreadIndex) => {
+    if (spread.mobile) {
+      mobilePages.push({ key: `${spread.key}-mobile`, content: spread.mobile, spreadIndex, side: 'single' })
+      return
+    }
     if (spread.left) mobilePages.push({ key: `${spread.key}-left`, content: spread.left, spreadIndex, side: 'left' })
     if (spread.right) mobilePages.push({ key: `${spread.key}-right`, content: spread.right, spreadIndex, side: 'right' })
   })
@@ -239,6 +247,7 @@ export function Book() {
   /* Cover opening progress: 0 = closed, 1 = fully open */
   const coverProgress = Math.min(1, Math.max(0, continuousPage))
   const coverSlideProgress = coverProgress * coverProgress * (3 - 2 * coverProgress)
+  const activeLeafIndex = Math.min(numLeaves - 1, Math.max(0, Math.floor(continuousPage)))
 
   if (isMobile) {
     return (
@@ -341,6 +350,7 @@ export function Book() {
           const isTurning = leafProgress > 0 && leafProgress < 1
           const photoShineStyle = getPhotoShineStyle(leafProgress, isTurning)
           const isCover = i === 0
+          const isRelevant = Math.abs(i - activeLeafIndex) <= 1
           let zIndex: number
           if (isTurning) {
             zIndex = numLeaves + 1
@@ -362,7 +372,8 @@ export function Book() {
                 transform: `rotateY(${angle}deg)`,
                 ...photoShineStyle,
                 zIndex,
-                transition: isTurning ? 'none' : 'transform 0.1s ease-out',
+                visibility: isRelevant ? 'visible' : 'hidden',
+                pointerEvents: isRelevant ? 'auto' : 'none',
               }}
             >
               {/* Front face — right page of spread i */}
@@ -376,7 +387,7 @@ export function Book() {
                   borderLeft: 'none',
                 }}
               >
-                <div className="h-full overflow-y-auto" data-book-scroll data-spread-index={i} data-page-side="right">
+                <div className="h-full overflow-y-auto" data-book-scroll data-spread-index={i} data-page-side="right" data-page-active={Math.abs(continuousPage - i) < 0.5}>
                   {spreads[i].right}
                 </div>
                 {/* Gutter shadow */}
@@ -391,7 +402,8 @@ export function Book() {
                   <div
                     className="absolute inset-0 pointer-events-none"
                     style={{
-                      background: `linear-gradient(to left, rgba(42,37,32,${0.12 * leafProgress * 2}) 0%, transparent 60%)`,
+                      background: 'linear-gradient(to left, rgba(42,37,32,0.12) 0%, transparent 60%)',
+                      opacity: leafProgress * 2,
                     }}
                   />
                 )}
@@ -423,28 +435,25 @@ export function Book() {
                   <div
                     className="absolute inset-0 pointer-events-none"
                     style={{
-                      background: `linear-gradient(to right, rgba(42,37,32,${0.12 * (1 - leafProgress) * 2}) 0%, transparent 60%)`,
+                      background: 'linear-gradient(to right, rgba(42,37,32,0.12) 0%, transparent 60%)',
+                      opacity: (1 - leafProgress) * 2,
                     }}
                   />
                 )}
               </div>
 
               {/* Cast shadow on the page underneath while turning */}
+              {/* Shadow falls on the side the page is moving away from */}
               {isTurning && (
                 <div
-                  className="absolute pointer-events-none"
+                  className={`absolute top-0 bottom-0 w-[30px] pointer-events-none ${leafProgress < 0.5 ? 'left-full' : 'right-full'}`}
                   style={{
-                    top: 0,
-                    bottom: 0,
-                    /* Shadow falls on the side the page is moving away from */
-                    ...(leafProgress < 0.5
-                      ? { left: '100%', width: '30px' }
-                      : { right: '100%', width: '30px' }),
                     background: leafProgress < 0.5
-                      ? `linear-gradient(to right, rgba(42,37,32,${0.08 * (1 - leafProgress * 2)}), transparent)`
-                      : `linear-gradient(to left, rgba(42,37,32,${0.08 * ((leafProgress - 0.5) * 2)}), transparent)`,
+                      ? 'linear-gradient(to right, rgba(42,37,32,0.08), transparent)'
+                      : 'linear-gradient(to left, rgba(42,37,32,0.08), transparent)',
+                    opacity: leafProgress < 0.5 ? 1 - leafProgress * 2 : (leafProgress - 0.5) * 2,
                     transformStyle: 'flat',
-                    transform: leafProgress < 0.5 ? 'none' : 'rotateY(180deg)',
+                    transform: leafProgress < 0.5 ? undefined : 'rotateY(180deg)',
                   }}
                 />
               )}
@@ -467,9 +476,8 @@ interface MobileBookProps {
 }
 
 function MobileBook({ pages, continuousPage, isDragging, onPointerDown, onPointerMove, onPointerEnd, onWheel }: MobileBookProps) {
-  const numLeaves = pages.length - 1
   const lastIndex = pages.length - 1
-  const activePageIndex = Math.min(lastIndex, Math.max(0, Math.floor(continuousPage + 0.001)))
+  const activePageIndex = Math.min(lastIndex, Math.max(0, Math.round(continuousPage)))
 
   useEffect(() => {
     const page = document.querySelector<HTMLElement>(`[data-mobile-page-index="${activePageIndex}"]`)
@@ -477,9 +485,9 @@ function MobileBook({ pages, continuousPage, isDragging, onPointerDown, onPointe
   }, [activePageIndex])
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center" style={{ perspective: '1800px' }}>
+    <div className="fixed inset-0 flex items-center justify-center">
       <div
-        className="relative"
+        className="mobile-book relative overflow-hidden rounded-[4px]"
         role="region"
         aria-label="Interactive book. Drag left or right to turn pages."
         onPointerDown={onPointerDown}
@@ -489,12 +497,14 @@ function MobileBook({ pages, continuousPage, isDragging, onPointerDown, onPointe
         onLostPointerCapture={onPointerEnd}
         onWheel={onWheel}
         style={{
-          width: 'min(90vw, 460px)',
+          width: 'min(calc(100vw - 24px), 460px)',
           height: 'min(72dvh, 620px)',
           cursor: isDragging ? 'grabbing' : 'grab',
           touchAction: 'pan-y',
           userSelect: isDragging ? 'none' : undefined,
-          transformStyle: 'preserve-3d',
+          backgroundColor: 'var(--card-bg)',
+          border: '1px solid var(--card-border)',
+          boxShadow: 'var(--card-shadow)',
         }}
       >
         <div
@@ -502,57 +512,30 @@ function MobileBook({ pages, continuousPage, isDragging, onPointerDown, onPointe
           style={{ background: 'radial-gradient(ellipse, rgba(42,37,32,0.18) 0%, transparent 70%)', filter: 'blur(7px)' }}
         />
 
-        <div
-          className="absolute inset-0 overflow-hidden rounded-[4px]"
-          style={{ backgroundColor: 'var(--card-bg)', border: '1px solid var(--card-border)', zIndex: 0 }}
-        >
-          <div className="h-full overflow-y-auto" data-book-scroll data-spread-index={pages[lastIndex].spreadIndex} data-page-side={pages[lastIndex].side} data-mobile-page-index={lastIndex}>
-            {pages[lastIndex].content}
-          </div>
-        </div>
-
-        {Array.from({ length: numLeaves }).map((_, index) => {
-          const leafProgress = getLeafProgress(index, continuousPage)
-          const isTurning = leafProgress > 0 && leafProgress < 1
-          const photoShineStyle = getPhotoShineStyle(leafProgress, isTurning)
-          const isCover = index === 0
-          const zIndex = isTurning
-            ? numLeaves + 1
-            : leafProgress >= 1
-              ? index + 1
-              : numLeaves - index
+        {pages.map((page, index) => {
+          const offset = index - continuousPage
+          const isVisible = Math.abs(offset) < 1.05
+          const clampedOffset = Math.min(1.05, Math.max(-1.05, offset))
 
           return (
             <div
-              key={pages[index].key}
-              className={`book-leaf${isCover ? ' book-leaf--cover' : ''} absolute inset-0`}
+              key={page.key}
+              className="mobile-book-page absolute inset-0 overflow-y-auto"
+              data-book-scroll
+              data-spread-index={page.spreadIndex}
+              data-page-side={page.side}
+              data-mobile-page-index={index}
+              aria-hidden={index !== activePageIndex}
               style={{
-                transformOrigin: 'left center',
-                transformStyle: 'preserve-3d',
-                transform: `rotateY(${-180 * leafProgress}deg)`,
-                ...photoShineStyle,
-                pointerEvents: leafProgress >= 1 ? 'none' : 'auto',
-                zIndex,
-                transition: isTurning ? 'none' : 'transform 0.1s ease-out',
+                backgroundColor: 'var(--card-bg)',
+                transform: `translate3d(${clampedOffset * 100}%, 0, 0)`,
+                visibility: isVisible ? 'visible' : 'hidden',
+                pointerEvents: index === activePageIndex ? 'auto' : 'none',
+                zIndex: pages.length - Math.abs(index - activePageIndex),
+                willChange: isVisible ? 'transform' : undefined,
               }}
             >
-              <div
-                className="absolute inset-0 overflow-hidden rounded-[4px]"
-                style={{
-                  backfaceVisibility: 'hidden',
-                  backgroundColor: 'var(--card-bg)',
-                  border: '1px solid var(--card-border)',
-                  boxShadow: isTurning ? '10px 4px 24px rgba(42,37,32,0.12)' : 'var(--card-shadow)',
-                }}
-              >
-                <div className="h-full overflow-y-auto" data-book-scroll data-spread-index={pages[index].spreadIndex} data-page-side={pages[index].side} data-mobile-page-index={index}>
-                  {pages[index].content}
-                </div>
-                <div
-                  className="absolute inset-y-0 left-0 w-6 pointer-events-none"
-                  style={{ background: 'linear-gradient(to right, rgba(42,37,32,0.06), transparent)' }}
-                />
-              </div>
+              {page.content}
             </div>
           )
         })}
@@ -622,12 +605,12 @@ function PageSurface({ side, spreadIndex, children }: { side: 'left' | 'right'; 
    ════════════════════════════════════════════ */
 
 function PageEdgeStack({ side, count }: { side: 'left' | 'right'; count: number }) {
-  const edges = Math.min(count, 8)
-  if (edges <= 0) return null
+  const maxEdges = 8
+  const visibleEdges = Math.min(Math.max(count, 0), maxEdges)
 
   return (
     <>
-      {Array.from({ length: edges }).map((_, i) => {
+      {Array.from({ length: maxEdges }).map((_, i) => {
         const offset = (i + 1) * 1.6
         return (
           <div
@@ -641,8 +624,9 @@ function PageEdgeStack({ side, count }: { side: 'left' | 'right'; count: number 
                 : { right: 0, width: '50%', borderRadius: '0 3px 3px 0' }),
               backgroundColor: 'var(--card-bg)',
               border: '1px solid var(--card-border)',
-              opacity: 0.35 + (i / edges) * 0.35,
+              opacity: i < visibleEdges ? 0.35 + (i / maxEdges) * 0.35 : 0,
               zIndex: -1 - i,
+              transition: 'opacity 120ms ease-out',
             }}
           />
         )
@@ -682,7 +666,7 @@ function AutobiographyPage({ title, text }: { title: string; text: string }) {
 
 function ChapterPage({ number, title, description }: { number: string; title: string; description: string }) {
   return (
-    <div className="h-full flex items-center justify-center p-10">
+    <div className="h-full flex items-center justify-center p-10 overflow-hidden">
       <div className="w-full max-w-[360px]">
         <h1
           className="text-4xl md:text-5xl leading-[1.04]"
@@ -701,12 +685,15 @@ function ChapterPage({ number, title, description }: { number: string; title: st
         >
           {description}
         </p>
+        <AnimatedDrawing className="chapter-drawing mt-9 flex justify-center">
+          <Flourish width={240} />
+        </AnimatedDrawing>
       </div>
     </div>
   )
 }
 
-function MiscPage({ side }: { side: 'left' | 'right' }) {
+function MiscPage({ side, books = [] }: { side: 'left' | 'right'; books?: BookRecommendation[] }) {
   const entries = side === 'left'
     ? [
         ['Sport & movement', 'Practice, endurance, and the value of staying in motion.'],
@@ -714,7 +701,7 @@ function MiscPage({ side }: { side: 'left' | 'right' }) {
         ['Mindset', 'Principles for learning, building, collaborating, and handling uncertainty.'],
       ]
     : [
-        ['Bookshelf', 'Books, essays, and references that are worth recommending.'],
+        ['Books I recommend', 'Ideas about culture, technology, and the way people think.'],
         ['Languages', 'Language learning as a tool for connection and cultural understanding.'],
         ['Curiosities', 'Experiments, interests, and ideas that do not belong in a résumé.'],
       ]
@@ -760,6 +747,20 @@ function MiscPage({ side }: { side: 'left' | 'right' }) {
             >
               {description}
             </p>
+            {title === 'Books I recommend' && books.length > 0 && (
+              <ul className="mt-3 pl-8 space-y-2">
+                {books.map((book) => (
+                  <li
+                    key={`${book.title}-${book.author}`}
+                    className="text-[11px] leading-[1.55]"
+                    style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-body)' }}
+                  >
+                    <cite style={{ color: 'var(--text-primary)', fontStyle: 'italic', fontWeight: 500 }}>{book.title}</cite>
+                    <span style={{ color: 'var(--text-tertiary)' }}> — {book.author}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         ))}
         <div style={{ borderTop: '1px dotted var(--border-pattern)' }} />
@@ -769,8 +770,12 @@ function MiscPage({ side }: { side: 'left' | 'right' }) {
   )
 }
 
-function getStartYear(year: string): number {
-  return Number(year.match(/\d{4}/)?.[0] ?? 0)
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+function getStartDate(date: string): number {
+  const match = date.match(/^(?:(\w{3})\s+)?(\d{4})/)
+  if (!match) return 0
+  return Number(match[2]) * 12 + Math.max(0, MONTHS.indexOf(match[1]))
 }
 
 /* ════════════════════════════════════════
