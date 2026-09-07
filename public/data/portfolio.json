@@ -157,6 +157,11 @@
           { "title": "Most Impactful Employee", "issuer": "Mercedes-Benz.io", "year": "2025" },
           { "title": "Goethe B1 Conversational German", "issuer": "Goethe-Institut", "year": "2025" }
         ],
+        "recognitionImage": {
+          "src": "/_LOR3336-web.jpeg",
+          "alt": "Francesco Done' receiving the Impact Award at Mercedes-Benz.io",
+          "caption": "The Impact Award with the Managing Directors · October 2025"
+        },
         "links": [
           { "label": "GitHub profile", "url": "https://github.com/francescodone", "icon": "github" },
           { "label": "LinkedIn", "url": "https://linkedin.com/in/francescodone", "icon": "link" }

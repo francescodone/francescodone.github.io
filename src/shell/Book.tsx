@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode, type WheelEvent as ReactWheelEvent } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode, type WheelEvent as ReactWheelEvent } from 'react'
 import { usePortfolio } from '@shared/contexts/PortfolioContext'
 import { useScrollContext } from '@shared/contexts/ScrollContext'
 import { BookPage } from '@sections/journey/BookPage'
-import { BOOK_DRAG_SCROLL_EVENT, TOTAL_BOOK_STOPS } from '@shared/tokens/design-tokens'
+import { BOOK_DRAG_SCROLL_EVENT, TOTAL_BOOK_STOPS, TOTAL_MOBILE_BOOK_STOPS } from '@shared/tokens/design-tokens'
 import { Flourish } from '@sections/journey/EncyclopediaIllustrations'
 
 const TOTAL_STOPS = TOTAL_BOOK_STOPS
@@ -11,6 +11,13 @@ interface BookSpread {
   key: string
   left: ReactNode
   right: ReactNode
+}
+
+interface MobilePage {
+  key: string
+  content: ReactNode
+  spreadIndex: number
+  side: 'left' | 'right'
 }
 
 /**
@@ -33,18 +40,19 @@ export function Book() {
   const [continuousPage, setContinuousPage] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches)
+  const totalStops = isMobile ? TOTAL_MOBILE_BOOK_STOPS : TOTAL_STOPS
   const dragRef = useRef({ pointerId: -1, startX: 0, startY: 0, startScroll: 0, axis: 'pending' as 'pending' | 'horizontal' | 'vertical' })
 
   useEffect(() => {
     let raf: number
     const tick = () => {
       const p = stateRef.current.progress
-      setContinuousPage(p * TOTAL_STOPS)
+      setContinuousPage(p * totalStops)
       raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [stateRef])
+  }, [stateRef, totalStops])
 
   useEffect(() => {
     const media = window.matchMedia('(max-width: 767px)')
@@ -52,6 +60,35 @@ export function Book() {
     media.addEventListener('change', updateLayout)
     return () => media.removeEventListener('change', updateLayout)
   }, [])
+
+  useEffect(() => {
+    const scrollers = [...document.querySelectorAll<HTMLElement>('[data-book-scroll]')]
+    const update = (scroller: HTMLElement) => {
+      const maxScroll = scroller.scrollHeight - scroller.clientHeight
+      scroller.dataset.scrollShadowTop = String(maxScroll > 1 && scroller.scrollTop > 1)
+      scroller.dataset.scrollShadowBottom = String(maxScroll > 1 && scroller.scrollTop < maxScroll - 1)
+    }
+    const updateAll = () => scrollers.forEach(update)
+    const handleScroll = (event: Event) => {
+      if (event.currentTarget instanceof HTMLElement) update(event.currentTarget)
+    }
+    const resizeObserver = new ResizeObserver(updateAll)
+
+    scrollers.forEach((scroller) => {
+      scroller.addEventListener('scroll', handleScroll, { passive: true })
+      resizeObserver.observe(scroller)
+      if (scroller.firstElementChild) resizeObserver.observe(scroller.firstElementChild)
+    })
+    document.addEventListener('load', updateAll, true)
+    const frame = requestAnimationFrame(updateAll)
+
+    return () => {
+      cancelAnimationFrame(frame)
+      document.removeEventListener('load', updateAll, true)
+      resizeObserver.disconnect()
+      scrollers.forEach((scroller) => scroller.removeEventListener('scroll', handleScroll))
+    }
+  }, [data, isMobile])
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.button !== 0 || (event.target as Element).closest('a, button')) return
@@ -79,7 +116,7 @@ export function Book() {
 
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight
     const pageWidth = event.currentTarget.getBoundingClientRect().width / (isMobile ? 1 : 2)
-    const scrollPerPage = maxScroll / TOTAL_STOPS
+    const scrollPerPage = maxScroll / totalStops
     const target = Math.min(
       maxScroll,
       Math.max(0, dragRef.current.startScroll + (dragDistance / pageWidth) * scrollPerPage),
@@ -91,23 +128,28 @@ export function Book() {
 
   const handlePointerEnd = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (dragRef.current.pointerId !== event.pointerId) return
+    const completedHorizontalDrag = dragRef.current.axis === 'horizontal'
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId)
     }
     dragRef.current.pointerId = -1
     setIsDragging(false)
+
+    if (completedHorizontalDrag) {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight
+      const step = Math.min(totalStops - 1, Math.max(0, Math.round((window.scrollY / maxScroll) * totalStops)))
+      const target = step === 0 ? 0 : ((step + 0.02) / totalStops) * maxScroll
+      const immediate = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      window.dispatchEvent(new CustomEvent(BOOK_DRAG_SCROLL_EVENT, {
+        detail: { target, immediate, duration: 0.45 },
+      }))
+    }
   }
 
   const handleWheel = (event: ReactWheelEvent<HTMLDivElement>) => {
-    const page = (event.target as Element).closest<HTMLElement>('[data-book-scroll]')
-    if (!page || event.deltaY === 0) return
-
-    const maxScroll = page.scrollHeight - page.clientHeight
-    const canScroll = event.deltaY > 0
-      ? page.scrollTop < maxScroll - 1
-      : page.scrollTop > 1
-
-    if (maxScroll > 1 && canScroll) event.stopPropagation()
+    if (event.deltaY !== 0 && (event.target as Element).closest('[data-book-scroll]')) {
+      event.stopPropagation()
+    }
   }
 
   if (!data) return null
@@ -130,8 +172,8 @@ export function Book() {
 
   spreads.push({
     key: 'autobiography',
-    left: <AutobiographyPage title="Across borders" text={data.personal.autobiography[0]} side="left" />,
-    right: <AutobiographyPage title="A constant curiosity" text={data.personal.autobiography[1]} side="right" />,
+    left: <AutobiographyPage title="Across borders" text={data.personal.autobiography[0]} />,
+    right: <AutobiographyPage title="A constant curiosity" text={data.personal.autobiography[1]} />,
   })
 
   const workSteps = data.journey
@@ -140,8 +182,6 @@ export function Book() {
   const academicSteps = data.journey
     .filter((step) => step.type === 'education')
     .sort((a, b) => getStartYear(b.year) - getStartYear(a.year))
-  let journeyIndex = 0
-
   spreads.push({
     key: 'chapter-work',
     left: null,
@@ -151,10 +191,9 @@ export function Book() {
   workSteps.forEach((step) => {
     spreads.push({
       key: step.id,
-      left: <BookPage step={step} index={journeyIndex} side="left" />,
-      right: <BookPage step={step} index={journeyIndex} side="right" />,
+      left: <BookPage step={step} side="left" />,
+      right: <BookPage step={step} side="right" />,
     })
-    journeyIndex += 1
   })
 
   spreads.push({
@@ -166,10 +205,9 @@ export function Book() {
   academicSteps.forEach((step) => {
     spreads.push({
       key: step.id,
-      left: <BookPage step={step} index={journeyIndex} side="left" />,
-      right: <BookPage step={step} index={journeyIndex} side="right" />,
+      left: <BookPage step={step} side="left" />,
+      right: <BookPage step={step} side="right" />,
     })
-    journeyIndex += 1
   })
 
   spreads.push({
@@ -190,6 +228,12 @@ export function Book() {
     right: <ContactPage contact={data.contact} />,
   })
 
+  const mobilePages: MobilePage[] = []
+  spreads.forEach((spread, spreadIndex) => {
+    if (spread.left) mobilePages.push({ key: `${spread.key}-left`, content: spread.left, spreadIndex, side: 'left' })
+    if (spread.right) mobilePages.push({ key: `${spread.key}-right`, content: spread.right, spreadIndex, side: 'right' })
+  })
+
   const numLeaves = spreads.length - 1 // N-1 leaves for N spreads
 
   /* Cover opening progress: 0 = closed, 1 = fully open */
@@ -199,7 +243,7 @@ export function Book() {
   if (isMobile) {
     return (
       <MobileBook
-        spreads={spreads}
+        pages={mobilePages}
         continuousPage={continuousPage}
         isDragging={isDragging}
         onPointerDown={handlePointerDown}
@@ -278,11 +322,11 @@ export function Book() {
         {/* ── Page-edge stacks ── */}
         <PageEdgeStack
           side="left"
-          count={Math.min(5, Math.floor(continuousPage))}
+          count={Math.min(8, Math.floor(continuousPage))}
         />
         <PageEdgeStack
           side="right"
-          count={Math.min(5, numLeaves - Math.floor(continuousPage))}
+          count={Math.min(8, numLeaves - Math.floor(continuousPage))}
         />
 
         {/* ── Turning leaves ── */}
@@ -295,6 +339,8 @@ export function Book() {
              - Turned leaves (progress ≈ 1): most recent on top  → z = i
              - Currently turning: highest z */
           const isTurning = leafProgress > 0 && leafProgress < 1
+          const photoShineStyle = getPhotoShineStyle(leafProgress, isTurning)
+          const isCover = i === 0
           let zIndex: number
           if (isTurning) {
             zIndex = numLeaves + 1
@@ -307,13 +353,14 @@ export function Book() {
           return (
             <div
               key={`leaf-${i}`}
-              className="absolute top-0 bottom-0"
+              className={`book-leaf${isCover ? ' book-leaf--cover' : ''} absolute top-0 bottom-0`}
               style={{
                 right: 0,
                 width: '50%',
                 transformOrigin: 'left center',
                 transformStyle: 'preserve-3d',
                 transform: `rotateY(${angle}deg)`,
+                ...photoShineStyle,
                 zIndex,
                 transition: isTurning ? 'none' : 'transform 0.1s ease-out',
               }}
@@ -352,10 +399,9 @@ export function Book() {
 
               {/* Back face — left page of spread i+1 */}
               <div
-                className="absolute inset-0 overflow-hidden"
+                className="book-leaf__back absolute inset-0 overflow-hidden"
                 style={{
                   backfaceVisibility: 'hidden',
-                  transform: 'rotateY(180deg)',
                   backgroundColor: 'var(--card-bg)',
                   borderRadius: '3px 0 0 3px',
                   border: '1px solid var(--card-border)',
@@ -411,7 +457,7 @@ export function Book() {
 }
 
 interface MobileBookProps {
-  spreads: BookSpread[]
+  pages: MobilePage[]
   continuousPage: number
   isDragging: boolean
   onPointerDown: (event: ReactPointerEvent<HTMLDivElement>) => void
@@ -420,12 +466,18 @@ interface MobileBookProps {
   onWheel: (event: ReactWheelEvent<HTMLDivElement>) => void
 }
 
-function MobileBook({ spreads, continuousPage, isDragging, onPointerDown, onPointerMove, onPointerEnd, onWheel }: MobileBookProps) {
-  const numLeaves = spreads.length - 1
-  const lastIndex = spreads.length - 1
+function MobileBook({ pages, continuousPage, isDragging, onPointerDown, onPointerMove, onPointerEnd, onWheel }: MobileBookProps) {
+  const numLeaves = pages.length - 1
+  const lastIndex = pages.length - 1
+  const activePageIndex = Math.min(lastIndex, Math.max(0, Math.floor(continuousPage + 0.001)))
+
+  useEffect(() => {
+    const page = document.querySelector<HTMLElement>(`[data-mobile-page-index="${activePageIndex}"]`)
+    if (page) page.scrollTop = 0
+  }, [activePageIndex])
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center" style={{ perspective: '1800px', paddingTop: '20px' }}>
+    <div className="fixed inset-0 flex items-center justify-center" style={{ perspective: '1800px' }}>
       <div
         className="relative"
         role="region"
@@ -454,15 +506,16 @@ function MobileBook({ spreads, continuousPage, isDragging, onPointerDown, onPoin
           className="absolute inset-0 overflow-hidden rounded-[4px]"
           style={{ backgroundColor: 'var(--card-bg)', border: '1px solid var(--card-border)', zIndex: 0 }}
         >
-          <div className="h-full overflow-y-auto" data-book-scroll data-spread-index={lastIndex} data-page-side="mobile">
-            {spreads[lastIndex].left}
-            {spreads[lastIndex].right}
+          <div className="h-full overflow-y-auto" data-book-scroll data-spread-index={pages[lastIndex].spreadIndex} data-page-side={pages[lastIndex].side} data-mobile-page-index={lastIndex}>
+            {pages[lastIndex].content}
           </div>
         </div>
 
         {Array.from({ length: numLeaves }).map((_, index) => {
           const leafProgress = getLeafProgress(index, continuousPage)
           const isTurning = leafProgress > 0 && leafProgress < 1
+          const photoShineStyle = getPhotoShineStyle(leafProgress, isTurning)
+          const isCover = index === 0
           const zIndex = isTurning
             ? numLeaves + 1
             : leafProgress >= 1
@@ -471,12 +524,13 @@ function MobileBook({ spreads, continuousPage, isDragging, onPointerDown, onPoin
 
           return (
             <div
-              key={`mobile-leaf-${index}`}
-              className="absolute inset-0"
+              key={pages[index].key}
+              className={`book-leaf${isCover ? ' book-leaf--cover' : ''} absolute inset-0`}
               style={{
                 transformOrigin: 'left center',
                 transformStyle: 'preserve-3d',
                 transform: `rotateY(${-180 * leafProgress}deg)`,
+                ...photoShineStyle,
                 pointerEvents: leafProgress >= 1 ? 'none' : 'auto',
                 zIndex,
                 transition: isTurning ? 'none' : 'transform 0.1s ease-out',
@@ -491,9 +545,8 @@ function MobileBook({ spreads, continuousPage, isDragging, onPointerDown, onPoin
                   boxShadow: isTurning ? '10px 4px 24px rgba(42,37,32,0.12)' : 'var(--card-shadow)',
                 }}
               >
-                <div className="h-full overflow-y-auto" data-book-scroll data-spread-index={index} data-page-side="mobile">
-                  {spreads[index].left}
-                  {spreads[index].right}
+                <div className="h-full overflow-y-auto" data-book-scroll data-spread-index={pages[index].spreadIndex} data-page-side={pages[index].side} data-mobile-page-index={index}>
+                  {pages[index].content}
                 </div>
                 <div
                   className="absolute inset-y-0 left-0 w-6 pointer-events-none"
@@ -517,6 +570,15 @@ function getLeafProgress(leafIndex: number, continuousPage: number): number {
   if (continuousPage <= leafIndex) return 0
   if (continuousPage >= leafIndex + 1) return 1
   return continuousPage - leafIndex
+}
+
+function getPhotoShineStyle(leafProgress: number, isTurning: boolean): CSSProperties {
+  const visibleProgress = Math.min(1, leafProgress * 2)
+  const intensity = isTurning ? 0.38 + Math.sin(Math.PI * leafProgress) * 0.34 : 0
+  return {
+    '--photo-shine-opacity': intensity.toFixed(3),
+    '--photo-shine-position': `${-70 + visibleProgress * 140}%`,
+  } as CSSProperties
 }
 
 /* ════════════════════════════════════════════
@@ -560,13 +622,13 @@ function PageSurface({ side, spreadIndex, children }: { side: 'left' | 'right'; 
    ════════════════════════════════════════════ */
 
 function PageEdgeStack({ side, count }: { side: 'left' | 'right'; count: number }) {
-  const edges = Math.min(count, 5)
+  const edges = Math.min(count, 8)
   if (edges <= 0) return null
 
   return (
     <>
       {Array.from({ length: edges }).map((_, i) => {
-        const offset = (i + 1) * 1.2
+        const offset = (i + 1) * 1.6
         return (
           <div
             key={`edge-${side}-${i}`}
@@ -589,7 +651,7 @@ function PageEdgeStack({ side, count }: { side: 'left' | 'right'; count: number 
   )
 }
 
-function AutobiographyPage({ title, text, side }: { title: string; text: string; side: 'left' | 'right' }) {
+function AutobiographyPage({ title, text }: { title: string; text: string }) {
   return (
     <article className="h-full relative">
       <div className="h-full flex items-center justify-center p-10 overflow-y-auto" data-book-scroll>
@@ -614,7 +676,6 @@ function AutobiographyPage({ title, text, side }: { title: string; text: string;
         </p>
       </div>
       </div>
-      <PageNumber side={side} number={side === 'left' ? 'auto · i' : 'auto · ii'} />
     </article>
   )
 }
@@ -704,7 +765,6 @@ function MiscPage({ side }: { side: 'left' | 'right' }) {
         <div style={{ borderTop: '1px dotted var(--border-pattern)' }} />
       </div>
       </div>
-      <PageNumber side={side} number={side === 'left' ? 'misc · i' : 'misc · ii'} />
     </div>
   )
 }
@@ -739,27 +799,27 @@ function ContactPage({ contact }: { contact: { email: string; github: string; li
       <div className="flex gap-3 mt-6">
         {contact.github && (
           <a href={contact.github} target="_blank" rel="noopener noreferrer"
-            className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+            className="w-[50px] h-[50px] shrink-0 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
             style={{ color: 'var(--text-secondary)', border: '1px solid var(--card-border)' }} aria-label="GitHub">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12Z"/>
             </svg>
           </a>
         )}
         {contact.linkedin && (
           <a href={contact.linkedin} target="_blank" rel="noopener noreferrer"
-            className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+            className="w-[50px] h-[50px] shrink-0 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
             style={{ color: 'var(--text-secondary)', border: '1px solid var(--card-border)' }} aria-label="LinkedIn">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
               <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
             </svg>
           </a>
         )}
         {contact.email && (
           <a href={`mailto:${contact.email}`}
-            className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+            className="w-[50px] h-[50px] shrink-0 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
             style={{ color: 'var(--text-secondary)', border: '1px solid var(--card-border)' }} aria-label="Email">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <rect x="2" y="4" width="20" height="16" rx="2"/>
               <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
             </svg>
@@ -771,23 +831,7 @@ function ContactPage({ contact }: { contact: { email: string; github: string; li
         Built with React & GSAP
       </p>
       </div>
-      <PageNumber side="right" number="fin" />
     </div>
-  )
-}
-
-/* ════════════════════════════════════════
-   PAGE NUMBER
-   ════════════════════════════════════════ */
-
-function PageNumber({ side, number }: { side: 'left' | 'right'; number: string | number }) {
-  return (
-    <span
-      className={`absolute bottom-4 z-10 pointer-events-none ${side === 'left' ? 'left-6' : 'right-6'} text-[9px]`}
-      style={{ color: 'var(--text-quaternary)', fontFamily: 'var(--font-display)', fontStyle: 'italic' }}
-    >
-      {number}
-    </span>
   )
 }
 
@@ -920,19 +964,23 @@ function FrontCover({ name, tagline }: { name: string; tagline: string }) {
           className="text-[8px] uppercase tracking-[0.16em] mt-4"
           style={{ color: 'rgba(232,225,200,0.58)', fontFamily: 'var(--font-sans)', fontWeight: 500 }}
         >
-          Drag or scroll to open
+          Drag or use the arrows to open
         </p>
         <svg
-          width="16"
-          height="26"
-          viewBox="0 0 16 26"
+          width="86"
+          height="24"
+          viewBox="0 0 86 24"
           fill="none"
-          className="cover-scroll-indicator mt-3"
+          className="cover-drag-indicator mt-3"
           style={{ color: 'rgba(232,225,200,0.5)' }}
           aria-hidden="true"
         >
-          <rect x="0.75" y="0.75" width="14.5" height="24.5" rx="7.25" stroke="currentColor" strokeWidth="1" />
-          <circle className="cover-scroll-dot" cx="8" cy="7" r="1.25" fill="currentColor" />
+          <path d="m10 7-5 5 5 5M76 7l5 5-5 5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M18 12h50" stroke="currentColor" strokeWidth="0.75" strokeDasharray="1 4" strokeLinecap="round" opacity="0.45" />
+          <g className="cover-drag-page">
+            <rect x="34" y="5" width="18" height="14" rx="1.5" fill="rgba(232,225,200,0.08)" stroke="currentColor" strokeWidth="1" />
+            <path d="M43 5v14" stroke="currentColor" strokeWidth="0.6" opacity="0.6" />
+          </g>
         </svg>
       </div>
 

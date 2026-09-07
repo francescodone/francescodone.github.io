@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useEffect, useState } from 'react'
+import { LOADING_COMPLETE_EVENT } from '@shared/tokens/design-tokens'
 
 export function LoadingScreen() {
   const [visible, setVisible] = useState(true)
@@ -21,7 +22,10 @@ export function LoadingScreen() {
   }, [])
 
   return (
-    <AnimatePresence>
+    <AnimatePresence onExitComplete={() => {
+      document.documentElement.dataset.loadingComplete = 'true'
+      window.dispatchEvent(new Event(LOADING_COMPLETE_EVENT))
+    }}>
       {visible && (
         <motion.div
           initial={{ opacity: 1 }}

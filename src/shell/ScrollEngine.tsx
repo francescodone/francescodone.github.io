@@ -9,10 +9,13 @@ export function ScrollEngine({ children }: { children: ReactNode }) {
   const { setProgress } = useScrollContext()
 
   useEffect(() => {
+    const wheelScrollSelector = '[data-book-scroll], [data-wheel-scroll]'
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
+      prevent: (node) => Boolean(node.closest(wheelScrollSelector)),
+      virtualScroll: ({ event }) => !event.ctrlKey && event.target instanceof Element && Boolean(event.target.closest(wheelScrollSelector)),
     })
 
     lenis.on('scroll', ScrollTrigger.update)
@@ -22,6 +25,13 @@ export function ScrollEngine({ children }: { children: ReactNode }) {
       lenis.scrollTo(target, { immediate, duration, force: true })
     }
     window.addEventListener(BOOK_DRAG_SCROLL_EVENT, handleBookDragScroll)
+
+    const containWheelToPages = (event: WheelEvent) => {
+      if (!event.ctrlKey && (!(event.target instanceof Element) || !event.target.closest(wheelScrollSelector))) {
+        event.preventDefault()
+      }
+    }
+    window.addEventListener('wheel', containWheelToPages, { passive: false, capture: true })
 
     const updateLenis = (time: number) => {
       lenis.raf(time * 1000)
@@ -41,6 +51,7 @@ export function ScrollEngine({ children }: { children: ReactNode }) {
 
     return () => {
       window.removeEventListener(BOOK_DRAG_SCROLL_EVENT, handleBookDragScroll)
+      window.removeEventListener('wheel', containWheelToPages, { capture: true })
       trigger.kill()
       lenis.destroy()
       gsap.ticker.remove(updateLenis)

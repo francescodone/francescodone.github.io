@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useScrollContext } from '@shared/contexts/ScrollContext'
 import { usePortfolio } from '@shared/contexts/PortfolioContext'
 import { useTheme, type ThemeMode } from '@shared/contexts/ThemeContext'
-import { BOOK_DRAG_SCROLL_EVENT, TOTAL_BOOK_STOPS } from '@shared/tokens/design-tokens'
+import { BOOK_DRAG_SCROLL_EVENT, LOADING_COMPLETE_EVENT, TOTAL_BOOK_STOPS, TOTAL_MOBILE_BOOK_STOPS } from '@shared/tokens/design-tokens'
 import type { JourneyStep } from '@shared/types/portfolio'
 
 const TOTAL_STOPS = TOTAL_BOOK_STOPS
@@ -12,6 +12,7 @@ const THEME_CYCLE: ThemeMode[] = ['light', 'dark', 'system']
 const FONT_SCALE_STEPS = [0.875, 1, 1.125, 1.25]
 const FONT_SCALE_STORAGE_KEY = 'portfolio-font-scale'
 const SEARCH_QUERY_STORAGE_KEY = 'portfolio-search-query'
+const MOBILE_TWO_SIDED_SPREADS = [2, 4, 5, 6, 8, 9, 10, 12]
 
 function getInitialFontScale(): number {
   if (typeof window === 'undefined') return 1
@@ -26,6 +27,10 @@ function getInitialSearchQuery(): string {
 
 function getStartYear(year: string): number {
   return Number(year.match(/\d{4}/)?.[0] ?? 0)
+}
+
+function getMobilePageIndex(spreadIndex: number): number {
+  return spreadIndex + MOBILE_TWO_SIDED_SPREADS.filter((index) => index < spreadIndex).length
 }
 
 function getJourneySearchContent(step: JourneyStep): string {
@@ -67,9 +72,26 @@ interface HighlightInstance {
 
 function SearchIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
       <circle cx="11" cy="11" r="6.5" />
       <path d="m16 16 4 4" />
+    </svg>
+  )
+}
+
+function DownloadIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
+      <path d="M14 2v6h6M12 11v6m-3-3 3 3 3-3" />
+    </svg>
+  )
+}
+
+function PageArrowIcon({ direction }: { direction: 'previous' | 'next' }) {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d={direction === 'previous' ? 'm15 18-6-6 6-6' : 'm9 18 6-6-6-6'} />
     </svg>
   )
 }
@@ -152,20 +174,20 @@ function scoreSearchEntry(entry: SearchEntry, terms: string[]): number {
 function ThemeIcon({ mode }: { mode: ThemeMode }) {
   if (mode === 'light') {
     return (
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
       </svg>
     )
   }
   if (mode === 'dark') {
     return (
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
       </svg>
     )
   }
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <rect x="2" y="3" width="20" height="14" rx="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" />
     </svg>
   )
@@ -177,11 +199,17 @@ export function HUD() {
   const { mode, setMode } = useTheme()
   const [activeStep, setActiveStep] = useState(0)
   const [progress, setProgressState] = useState(0)
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches)
   const [fontScale, setFontScale] = useState(getInitialFontScale)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState(getInitialSearchQuery)
+  const [isPageTurning, setIsPageTurning] = useState(false)
+  const [controlsReady, setControlsReady] = useState(false)
   const searchButtonRef = useRef<HTMLButtonElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const pageTurnLockRef = useRef(false)
+  const pageTurnTimerRef = useRef<number | null>(null)
+  const totalStops = isMobile ? TOTAL_MOBILE_BOOK_STOPS : TOTAL_STOPS
 
   useEffect(() => {
     document.documentElement.style.fontSize = `${fontScale * 100}%`
@@ -191,6 +219,32 @@ export function HUD() {
   useEffect(() => {
     localStorage.setItem(SEARCH_QUERY_STORAGE_KEY, searchQuery)
   }, [searchQuery])
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 767px)')
+    const updateLayout = () => setIsMobile(media.matches)
+    media.addEventListener('change', updateLayout)
+    return () => media.removeEventListener('change', updateLayout)
+  }, [])
+
+  useEffect(() => {
+    let timer: number | null = null
+    const revealControls = () => {
+      if (timer !== null) window.clearTimeout(timer)
+      timer = window.setTimeout(() => setControlsReady(true), 240)
+    }
+    if (document.documentElement.dataset.loadingComplete === 'true') revealControls()
+    else window.addEventListener(LOADING_COMPLETE_EVENT, revealControls)
+
+    return () => {
+      window.removeEventListener(LOADING_COMPLETE_EVENT, revealControls)
+      if (timer !== null) window.clearTimeout(timer)
+    }
+  }, [])
+
+  useEffect(() => () => {
+    if (pageTurnTimerRef.current !== null) window.clearTimeout(pageTurnTimerRef.current)
+  }, [])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -221,24 +275,43 @@ export function HUD() {
     let raf: number
     const tick = () => {
       const current = stateRef.current
-      setActiveStep(current.activeStep)
+      setActiveStep(Math.min(totalStops - 1, Math.floor(current.progress * totalStops)))
       setProgressState(current.progress)
       raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [stateRef])
+  }, [stateRef, totalStops])
 
-  const scrollToStep = (index: number) => {
+  const scrollToStep = (index: number, durationOverride?: number) => {
     clearSearchHighlights()
+    const targetIndex = Math.min(totalStops - 1, Math.max(0, index))
     const totalHeight = document.documentElement.scrollHeight - window.innerHeight
-    const targetScroll = ((index + 0.02) / TOTAL_STOPS) * totalHeight
-    const distance = Math.abs(index - activeStep)
+    const targetScroll = targetIndex === 0 ? 0 : ((targetIndex + 0.02) / totalStops) * totalHeight
+    const distance = Math.abs(targetIndex - activeStep)
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const duration = Math.min(2.2, 0.65 + distance * 0.16)
+    const duration = durationOverride ?? Math.min(2.8, 1.15 + distance * 0.2)
     window.dispatchEvent(new CustomEvent(BOOK_DRAG_SCROLL_EVENT, {
       detail: { target: targetScroll, immediate: prefersReducedMotion, duration },
     }))
+  }
+
+  const navigateOnePage = (direction: -1 | 1) => {
+    if (pageTurnLockRef.current) return
+    const currentStep = Math.min(totalStops - 1, Math.max(0, Math.round(stateRef.current.progress * totalStops)))
+    const targetStep = Math.min(totalStops - 1, Math.max(0, currentStep + direction))
+    if (targetStep === currentStep) return
+
+    const duration = direction === 1 ? 2.1 : 1.35
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    pageTurnLockRef.current = true
+    setIsPageTurning(true)
+    scrollToStep(targetStep, duration)
+    pageTurnTimerRef.current = window.setTimeout(() => {
+      pageTurnLockRef.current = false
+      pageTurnTimerRef.current = null
+      setIsPageTurning(false)
+    }, reducedMotion ? 0 : duration * 1000 + 100)
   }
 
   const cycleTheme = () => {
@@ -267,7 +340,7 @@ export function HUD() {
   const beyondWorkChapter = academicStart + academicSteps.length
   const miscStep = beyondWorkChapter + 1
   const contactStep = miscStep + 1
-  const stepLabels = [
+  const desktopStepLabels = [
     'Cover',
     'Chapter 1: Autobiography',
     'My Story',
@@ -279,12 +352,27 @@ export function HUD() {
     'Field Notes',
     'Contact',
   ]
+  const mobileStepLabels = [
+    'Cover',
+    'Chapter 1: Autobiography',
+    'My Story · I',
+    'My Story · II',
+    'Chapter 2: Professional Journey',
+    ...workSteps.flatMap((step) => [`${step.institution} · Profile`, `${step.institution} · Notes`]),
+    'Chapter 3: Education',
+    ...academicSteps.flatMap((step) => [`${step.institution} · Profile`, `${step.institution} · Notes`]),
+    'Chapter 4: Beyond Work',
+    'Field Notes · I',
+    'Field Notes · II',
+    'Contact',
+  ]
+  const stepLabels = isMobile ? mobileStepLabels : desktopStepLabels
   const searchEntries: SearchEntry[] = data ? [
     {
       id: 'cover',
       title: data.personal.name,
       subtitle: 'A Personal Encyclopedia',
-      content: `${data.personal.name} A Personal Encyclopedia ${data.personal.tagline} Drag or scroll to open`,
+      content: `${data.personal.name} A Personal Encyclopedia ${data.personal.tagline} Drag or use the arrows to open`,
       step: 0,
     },
     {
@@ -346,8 +434,8 @@ export function HUD() {
     {
       id: 'contact',
       title: 'Contact Francesco',
-      subtitle: 'GitHub, LinkedIn, and email',
-      content: `Let's connect Always open to new projects creative ideas or a good conversation GitHub LinkedIn Email ${data.contact.email} ${data.contact.github} ${data.contact.linkedin}`,
+      subtitle: 'GitHub, LinkedIn, email, and CV',
+      content: `Let's connect Always open to new projects creative ideas or a good conversation GitHub LinkedIn Email CV PDF resume ${data.contact.email} ${data.contact.github} ${data.contact.linkedin}`,
       step: contactStep,
     },
   ] : []
@@ -362,8 +450,9 @@ export function HUD() {
 
   const selectSearchResult = (entry: SearchEntry) => {
     const query = searchQuery
+    const navigationStep = isMobile ? getMobilePageIndex(entry.step) : entry.step
     const totalHeight = document.documentElement.scrollHeight - window.innerHeight
-    const target = ((entry.step + 0.02) / TOTAL_STOPS) * totalHeight
+    const target = navigationStep === 0 ? 0 : ((navigationStep + 0.02) / totalStops) * totalHeight
     setSearchOpen(false)
     window.setTimeout(() => {
       window.dispatchEvent(new CustomEvent(BOOK_DRAG_SCROLL_EVENT, { detail: { target, immediate: true } }))
@@ -382,11 +471,11 @@ export function HUD() {
   return (
     <div className="fixed z-50 pointer-events-none inset-0">
       {/* Display controls */}
-      <div className="pointer-events-auto absolute top-[20px] right-[20px] flex items-center gap-[6px]">
+      <div className={`top-controls cascading-controls${controlsReady ? ' controls-ready' : ''} pointer-events-auto absolute top-[20px] right-[20px] flex items-center gap-[6px]`}>
         <button
           ref={searchButtonRef}
           onClick={() => setSearchOpen(true)}
-          className="w-[32px] h-[32px] rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95"
+          className="w-[50px] h-[50px] shrink-0 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95"
           style={controlStyle}
           aria-label="Search the book"
           title="Search the book (⌘K)"
@@ -398,32 +487,43 @@ export function HUD() {
         <button
           onClick={() => adjustFontScale(-1)}
           disabled={fontScaleIndex === 0}
-          className="w-[32px] h-[32px] rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:scale-100"
+          className="w-[50px] h-[50px] shrink-0 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:scale-100 disabled:active:scale-100"
           style={controlStyle}
           aria-label={`Decrease font size. Current size ${fontScalePercent}%.`}
           title={`Decrease font size (${fontScalePercent}%)`}
         >
-          <span aria-hidden="true" style={{ fontFamily: 'var(--font-sans)', fontSize: '13px', fontWeight: 500, lineHeight: 1 }}>a</span>
+          <span aria-hidden="true" style={{ fontFamily: 'var(--font-sans)', fontSize: '18px', fontWeight: 500, lineHeight: 1 }}>a</span>
         </button>
         <button
           onClick={() => adjustFontScale(1)}
           disabled={fontScaleIndex === FONT_SCALE_STEPS.length - 1}
-          className="w-[32px] h-[32px] rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:scale-100"
+          className="w-[50px] h-[50px] shrink-0 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:scale-100 disabled:active:scale-100"
           style={controlStyle}
           aria-label={`Increase font size. Current size ${fontScalePercent}%.`}
           title={`Increase font size (${fontScalePercent}%)`}
         >
-          <span aria-hidden="true" style={{ fontFamily: 'var(--font-sans)', fontSize: '16px', fontWeight: 500, lineHeight: 1 }}>A</span>
+          <span aria-hidden="true" style={{ fontFamily: 'var(--font-sans)', fontSize: '22px', fontWeight: 500, lineHeight: 1 }}>A</span>
         </button>
         <button
           onClick={cycleTheme}
-          className="w-[32px] h-[32px] rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95"
+          className="w-[50px] h-[50px] shrink-0 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95"
           style={controlStyle}
           aria-label={`Theme: ${mode}. Click to switch.`}
           title={`Theme: ${mode}`}
         >
           <ThemeIcon mode={mode} />
         </button>
+        <a
+          href="/francesco-done-cv.pdf"
+          download="Francesco-Done-CV.pdf"
+          type="application/pdf"
+          className="w-[50px] h-[50px] shrink-0 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95"
+          style={controlStyle}
+          aria-label="Download CV as PDF"
+          title="Download CV (PDF)"
+        >
+          <DownloadIcon />
+        </a>
       </div>
 
       <AnimatePresence>
@@ -489,12 +589,12 @@ export function HUD() {
                         setSearchQuery('')
                         requestAnimationFrame(() => searchInputRef.current?.focus())
                       }}
-                      className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full transition-colors hover:bg-[var(--accent-soft)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]"
+                      className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full transition-colors hover:bg-[var(--accent-soft)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]"
                       style={{ color: 'var(--text-tertiary)', border: '1px solid var(--card-border)' }}
                       aria-label="Clear search"
                       title="Clear search"
                     >
-                      <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" aria-hidden="true">
                         <path d="M2.5 2.5 9.5 9.5" />
                         <path d="m9.5 2.5-7 7" />
                       </svg>
@@ -509,7 +609,7 @@ export function HUD() {
                 </kbd>
               </div>
 
-              <div id="book-search-results" className="max-h-[52vh] overflow-y-auto p-[8px]" role="listbox">
+              <div id="book-search-results" className="max-h-[52vh] overflow-y-auto p-[8px]" role="listbox" data-wheel-scroll>
                 {searchTerms.length === 0 && (
                   <p
                     className="px-[12px] py-[18px]"
@@ -564,12 +664,37 @@ export function HUD() {
         )}
       </AnimatePresence>
 
+      <div className={`cascading-controls${controlsReady ? ' controls-ready' : ''} pointer-events-auto absolute bottom-[20px] right-[24px] flex items-center gap-[8px]`}>
+        <button
+          type="button"
+          onClick={() => navigateOnePage(-1)}
+          disabled={isPageTurning || activeStep === 0}
+          className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full cursor-pointer transition-[transform,opacity] duration-[350ms] ease-out hover:scale-110 active:scale-[0.96] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-[0.55] disabled:hover:scale-100 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]"
+          style={controlStyle}
+          aria-label="Previous page"
+          title="Previous page"
+        >
+          <PageArrowIcon direction="previous" />
+        </button>
+        <button
+          type="button"
+          onClick={() => navigateOnePage(1)}
+          disabled={isPageTurning || activeStep === totalStops - 1}
+          className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full cursor-pointer transition-[transform,opacity] duration-[350ms] ease-out hover:scale-110 active:scale-[0.96] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-[0.55] disabled:hover:scale-100 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]"
+          style={controlStyle}
+          aria-label="Next page"
+          title="Next page"
+        >
+          <PageArrowIcon direction="next" />
+        </button>
+      </div>
+
       {/* Navigation dots */}
       <nav
         className="absolute right-5 top-1/2 -translate-y-1/2 hidden md:flex flex-col gap-2.5 pointer-events-auto"
         aria-label="Journey navigation"
       >
-        {stepLabels.map((label, i) => (
+        {desktopStepLabels.map((label, i) => (
           <button
             key={i}
             onClick={() => scrollToStep(i)}
@@ -614,13 +739,13 @@ export function HUD() {
           animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
           transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
-          className="absolute bottom-5 left-6 pointer-events-none"
+          className="absolute bottom-[20px] left-[24px] h-[50px] flex flex-col justify-center pointer-events-none"
         >
           <span
             className="text-[10px] tracking-[0.12em]"
             style={{ color: 'var(--text-quaternary)', fontFamily: 'var(--font-mono)' }}
           >
-            {String(activeStep + 1).padStart(2, '0')}/{String(TOTAL_STOPS).padStart(2, '0')}
+            {String(activeStep + 1).padStart(2, '0')}/{String(totalStops).padStart(2, '0')}
           </span>
           <p
             className="text-[12px] mt-0.5"
