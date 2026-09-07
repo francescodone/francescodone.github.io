@@ -18,11 +18,18 @@ export interface StepAward {
   year?: string
 }
 
+export interface StepImage {
+  src: string
+  alt: string
+  caption?: string
+}
+
 export interface StepDetail {
   highlights?: string[]
   links?: StepLink[]
   papers?: StepLink[]
   awards?: StepAward[]
+  recognitionImage?: StepImage
   courses?: string[]
   responsibilities?: string[]
 }

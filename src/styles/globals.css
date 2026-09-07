@@ -31,6 +31,9 @@
   --card-shadow: 0 2px 8px rgba(26,24,16,0.12), 0 0 0 0.5px rgba(26,24,16,0.06);
   --card-shadow-hover: 0 4px 16px rgba(26,24,16,0.16), 0 0 0 0.5px rgba(26,24,16,0.08);
   --card-separator: rgba(26,24,16,0.1);
+  --image-outline: rgba(0,0,0,0.1);
+  --page-scroll-shadow: rgba(26,24,16,0.52);
+  --page-scroll-shadow-soft: rgba(26,24,16,0.2);
 
   /* Pill/tag surfaces */
   --pill-bg: rgba(184,176,152,0.35);
@@ -90,6 +93,9 @@
   --card-shadow: 0 2px 8px rgba(0,0,0,0.3), 0 0 0 0.5px rgba(221,216,196,0.04);
   --card-shadow-hover: 0 4px 16px rgba(0,0,0,0.4), 0 0 0 0.5px rgba(221,216,196,0.06);
   --card-separator: rgba(221,216,196,0.08);
+  --image-outline: rgba(255,255,255,0.1);
+  --page-scroll-shadow: rgba(0,0,0,0.78);
+  --page-scroll-shadow-soft: rgba(0,0,0,0.34);
 
   --pill-bg: rgba(221,216,196,0.07);
   --pill-border: rgba(221,216,196,0.1);
@@ -158,6 +164,33 @@
   }
 }
 
+[data-book-scroll] {
+  --scroll-shadow-top: transparent;
+  --scroll-shadow-top-soft: transparent;
+  --scroll-shadow-bottom: transparent;
+  --scroll-shadow-bottom-soft: transparent;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+  touch-action: pan-y;
+  box-shadow: inset 0 14px 16px -12px var(--scroll-shadow-top), inset 0 36px 32px -26px var(--scroll-shadow-top-soft), inset 0 -14px 16px -12px var(--scroll-shadow-bottom), inset 0 -36px 32px -26px var(--scroll-shadow-bottom-soft);
+  transition: box-shadow 180ms ease-out;
+}
+
+[data-book-scroll][data-scroll-shadow-top="true"] {
+  --scroll-shadow-top: var(--page-scroll-shadow);
+  --scroll-shadow-top-soft: var(--page-scroll-shadow-soft);
+}
+
+[data-book-scroll][data-scroll-shadow-bottom="true"] {
+  --scroll-shadow-bottom: var(--page-scroll-shadow);
+  --scroll-shadow-bottom-soft: var(--page-scroll-shadow-soft);
+}
+
+[data-book-scroll][data-page-side],
+[data-wheel-scroll] {
+  overscroll-behavior-y: contain;
+}
+
 ::-webkit-scrollbar {
   width: 5px;
 }
@@ -191,28 +224,126 @@
 .text-\[22px\] { font-size: 1.375rem; }
 .text-\[28px\] { font-size: 1.75rem; }
 
-.cover-scroll-indicator {
-  animation: cover-scroll-float 2.4s ease-in-out infinite;
+.book-leaf {
+  --leaf-thickness: 2.5px;
+  --leaf-edge: linear-gradient(90deg, var(--card-border), var(--card-bg) 48%, var(--card-border));
 }
 
-.cover-scroll-dot {
-  animation: cover-scroll-dot 2.4s ease-in-out infinite;
+.book-leaf--cover {
+  --leaf-thickness: 10px;
+  --leaf-edge: linear-gradient(90deg, #2b291f, #5c5940 48%, #25231b);
+}
+
+.book-leaf__back {
+  transform: rotateY(180deg);
+}
+
+.book-leaf::before,
+.book-leaf::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  background: var(--leaf-edge);
+  backface-visibility: visible;
+}
+
+.book-leaf::before {
+  top: 0;
+  right: calc(0px - var(--leaf-thickness));
+  bottom: 0;
+  width: var(--leaf-thickness);
+  transform: rotateY(90deg);
+  transform-origin: left center;
+}
+
+.book-leaf::after {
+  right: 0;
+  bottom: calc(0px - var(--leaf-thickness));
+  left: 0;
+  height: var(--leaf-thickness);
+  transform: rotateX(-90deg);
+  transform-origin: center top;
+}
+
+.recognition-photo::before,
+.recognition-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.recognition-photo::before {
+  background: linear-gradient(120deg, rgba(255,255,255,0.14), transparent 32%, transparent 68%, rgba(255,255,255,0.1));
+  opacity: 0.35;
+}
+
+.recognition-photo::after {
+  inset: -20% -25%;
+  background: linear-gradient(105deg, transparent 15%, rgba(255,255,255,0.12) 32%, rgba(255,255,255,0.72) 48%, rgba(255,255,255,0.2) 64%, transparent 82%);
+  filter: blur(2px);
+  opacity: var(--photo-shine-opacity, 0);
+  transform: translate3d(var(--photo-shine-position, -70%), 0, 0) skewX(-12deg);
+  will-change: transform, opacity;
+}
+
+.cascading-controls:not(.controls-ready) > * {
+  visibility: hidden;
+}
+
+.cascading-controls.controls-ready > * {
+  animation: top-control-cascade 0.62s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  will-change: transform, opacity, filter;
+}
+
+.cascading-controls.controls-ready > :nth-last-child(1) { animation-delay: 0s; }
+.cascading-controls.controls-ready > :nth-last-child(2) { animation-delay: 0.09s; }
+.cascading-controls.controls-ready > :nth-last-child(3) { animation-delay: 0.18s; }
+.cascading-controls.controls-ready > :nth-last-child(4) { animation-delay: 0.27s; }
+.cascading-controls.controls-ready > :nth-last-child(5) { animation-delay: 0.36s; }
+
+@keyframes top-control-cascade {
+  from { opacity: 0; filter: blur(3px); transform: translateX(14px) scale(0.94); }
+  to { opacity: 1; filter: blur(0); transform: translateX(0) scale(1); }
+}
+
+.cover-drag-indicator {
+  overflow: visible;
+}
+
+.cover-drag-page {
+  animation: cover-drag-page 2.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
   transform-box: fill-box;
   transform-origin: center;
+  will-change: transform, opacity;
 }
 
-@keyframes cover-scroll-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(3px); }
+@keyframes cover-drag-page {
+  0%, 100% { opacity: 0.45; transform: translateX(-14px); }
+  50% { opacity: 1; transform: translateX(14px); }
 }
 
-@keyframes cover-scroll-dot {
-  0% { opacity: 0.4; transform: translateY(0); }
-  45% { opacity: 1; }
-  80%, 100% { opacity: 0.25; transform: translateY(7px); }
+@media (max-width: 767px) {
+  .book-leaf {
+    --leaf-thickness: 2px;
+  }
+
+  .book-leaf--cover {
+    --leaf-thickness: 8px;
+  }
+
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .cascading-controls > * {
+    animation-delay: 0s !important;
+  }
+
+  .recognition-photo::after {
+    display: none;
+  }
+
   *,
   *::before,
   *::after {

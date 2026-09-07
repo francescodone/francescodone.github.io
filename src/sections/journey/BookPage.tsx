@@ -1,18 +1,17 @@
-import type { JourneyStep, StepAward, StepLink } from '@shared/types/portfolio'
+import type { JourneyStep, StepAward, StepImage, StepLink } from '@shared/types/portfolio'
 
 interface BookPageProps {
   step: JourneyStep
-  index: number
   side: 'left' | 'right'
 }
 
-export function BookPage({ step, index, side }: BookPageProps) {
+export function BookPage({ step, side }: BookPageProps) {
   return side === 'left'
-    ? <PrimaryPage step={step} pageNumber={index * 2 + 1} />
-    : <DetailsPage step={step} pageNumber={index * 2 + 2} />
+    ? <PrimaryPage step={step} />
+    : <DetailsPage step={step} />
 }
 
-function PrimaryPage({ step, pageNumber }: { step: JourneyStep; pageNumber: number }) {
+function PrimaryPage({ step }: { step: JourneyStep }) {
   return (
     <article className="h-full relative">
       <div className="h-full flex flex-col px-10 py-9 overflow-y-auto" data-book-scroll>
@@ -78,12 +77,11 @@ function PrimaryPage({ step, pageNumber }: { step: JourneyStep; pageNumber: numb
       </div>
       </div>
 
-      <PageNumber side="left" number={pageNumber} />
     </article>
   )
 }
 
-function DetailsPage({ step, pageNumber }: { step: JourneyStep; pageNumber: number }) {
+function DetailsPage({ step }: { step: JourneyStep }) {
   const highlights = [
     ...(step.details?.highlights ?? []),
     ...(step.details?.responsibilities ?? []),
@@ -108,7 +106,7 @@ function DetailsPage({ step, pageNumber }: { step: JourneyStep; pageNumber: numb
       <div className="flex-1 max-w-[390px] mx-auto w-full py-8 space-y-7">
         {highlights.length > 0 && <TextList title="Highlights" items={highlights} />}
         {step.details?.awards && step.details.awards.length > 0 && (
-          <AwardsList items={step.details.awards} />
+          <AwardsList items={step.details.awards} image={step.details.recognitionImage} />
         )}
         {step.details?.courses && step.details.courses.length > 0 && (
           <section>
@@ -133,7 +131,6 @@ function DetailsPage({ step, pageNumber }: { step: JourneyStep; pageNumber: numb
       </div>
       </div>
 
-      <PageNumber side="right" number={pageNumber} />
     </article>
   )
 }
@@ -169,7 +166,7 @@ function TextList({ title, items }: { title: string; items: string[] }) {
   )
 }
 
-function AwardsList({ items }: { items: StepAward[] }) {
+function AwardsList({ items, image }: { items: StepAward[]; image?: StepImage }) {
   return (
     <section>
       <SectionTitle>Recognition</SectionTitle>
@@ -189,6 +186,30 @@ function AwardsList({ items }: { items: StepAward[] }) {
           </p>
         ))}
       </div>
+      {image && (
+        <figure className="mt-5">
+          <div
+            className="recognition-photo relative isolate overflow-hidden"
+            style={{ outline: '1px solid var(--image-outline)', boxShadow: 'var(--card-shadow)' }}
+          >
+            <img
+              src={image.src}
+              alt={image.alt}
+              loading="lazy"
+              decoding="async"
+              className="block aspect-[3/2] w-full object-cover"
+            />
+          </div>
+          {image.caption && (
+            <figcaption
+              className="mt-2 text-[9px] italic"
+              style={{ color: 'var(--text-quaternary)', fontFamily: 'var(--font-body)' }}
+            >
+              {image.caption}
+            </figcaption>
+          )}
+        </figure>
+      )}
     </section>
   )
 }
@@ -212,16 +233,5 @@ function ReferencesList({ items }: { items: StepLink[] }) {
         ))}
       </div>
     </section>
-  )
-}
-
-function PageNumber({ side, number }: { side: 'left' | 'right'; number: number }) {
-  return (
-    <span
-      className={`absolute bottom-4 z-10 pointer-events-none ${side === 'left' ? 'left-6' : 'right-6'} text-[9px]`}
-      style={{ color: 'var(--text-quaternary)', fontFamily: 'var(--font-body)', fontStyle: 'italic' }}
-    >
-      {number}
-    </span>
   )
 }
