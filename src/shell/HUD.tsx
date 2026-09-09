@@ -55,7 +55,7 @@ function getJourneySearchContent(step: JourneyStep): string {
     ...(details?.papers?.map((link) => link.label) ?? []),
     ...(details?.links?.map((link) => link.label) ?? []),
     details?.highlights?.length || details?.responsibilities?.length ? 'Highlights' : '',
-    details?.awards?.length ? 'Recognition' : '',
+    details?.awards?.length ? 'Awards & Certificates' : '',
     details?.courses?.length ? 'Selected study' : '',
     details?.papers?.length || details?.links?.length ? 'References' : '',
   ].filter(Boolean).join(' ')
@@ -348,10 +348,9 @@ export function HUD() {
   const academicSteps = (data?.journey ?? [])
     .filter((step) => step.type === 'education')
     .sort((a, b) => getStartDate(b.year) - getStartDate(a.year))
-  const autobiographyChapter = 1
-  const autobiographyStep = 2
-  const professionalChapter = 3
-  const workStart = 4
+  const autobiographyStep = 1
+  const professionalChapter = 2
+  const workStart = 3
   const educationChapter = workStart + workSteps.length
   const academicStart = educationChapter + 1
   const beyondWorkChapter = academicStart + academicSteps.length
@@ -360,8 +359,7 @@ export function HUD() {
   const mobileTwoSidedSpreads = [autobiographyStep, miscStep]
   const desktopStepLabels = [
     'Cover',
-    'Chapter 1: Autobiography',
-    'My Story',
+    'Autobiography',
     'Chapter 2: Professional Journey',
     ...workSteps.map((step) => step.institution),
     'Chapter 3: Education',
@@ -372,9 +370,8 @@ export function HUD() {
   ]
   const mobileStepLabels = [
     'Cover',
-    'Chapter 1: Autobiography',
-    'My Story · I',
-    'My Story · II',
+    'The Road',
+    'The Mindset',
     'Chapter 2: Professional Journey',
     ...workSteps.map((step) => step.institution),
     'Chapter 3: Education',
@@ -394,17 +391,10 @@ export function HUD() {
       step: 0,
     },
     {
-      id: 'chapter-autobiography',
+      id: 'autobiography',
       title: 'Chapter 1: Autobiography',
       subtitle: 'Places, choices, and curiosity',
-      content: 'Chapter 1 Autobiography places choices curiosity chapters',
-      step: autobiographyChapter,
-    },
-    {
-      id: 'autobiography',
-      title: 'My Story',
-      subtitle: 'Across borders · A constant curiosity',
-      content: `Chapter 1 Autobiography Across borders A constant curiosity ${data.personal.bio} ${data.personal.autobiography.join(' ')}`,
+      content: `Chapter 1 Autobiography Venice London Padua Milan Copenhagen Düsseldorf Munich ${data.personal.bio} ${data.personal.autobiography.join(' ')}`,
       step: autobiographyStep,
     },
     {
@@ -688,7 +678,7 @@ export function HUD() {
           type="button"
           onClick={() => navigateOnePage(-1)}
           disabled={isPageTurning || activeStep === 0}
-          className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full cursor-pointer transition-[transform,opacity] duration-[350ms] ease-out hover:scale-110 active:scale-[0.96] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-[0.55] disabled:hover:scale-100 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]"
+          className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:scale-100 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]"
           style={controlStyle}
           aria-label="Previous page"
           title="Previous page"
@@ -699,7 +689,7 @@ export function HUD() {
           type="button"
           onClick={() => navigateOnePage(1)}
           disabled={isPageTurning || activeStep === totalStops}
-          className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full cursor-pointer transition-[transform,opacity] duration-[350ms] ease-out hover:scale-110 active:scale-[0.96] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-[0.55] disabled:hover:scale-100 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]"
+          className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:scale-100 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]"
           style={controlStyle}
           aria-label="Next page"
           title="Next page"
