@@ -48,81 +48,48 @@ export function OutroOverlay() {
         Selected work
       </motion.p>
 
-      {/* Projects grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full mb-16">
+      {/* Projects list */}
+      <div className="flex flex-col gap-4 w-full text-left mb-16">
         {projects.map((proj, i) => (
-          <motion.div
+          <motion.p
             key={proj.id}
             variants={scaleIn}
             custom={i}
-            className="p-5 text-left transition-all duration-300"
-            style={{
-              backgroundColor: 'var(--card-bg)',
-              border: '1px solid var(--card-border)',
-              boxShadow: 'var(--card-shadow)',
-            }}
+            className="text-[12px] leading-[1.75]"
+            style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-body)' }}
           >
-            <h4
-              className="text-[15px] leading-snug"
-              style={{
-                color: 'var(--text-primary)',
-                fontFamily: 'var(--font-display)',
-                fontWeight: 500,
-                letterSpacing: '-0.01em',
-              }}
-            >
-              {proj.title}
-            </h4>
-            <p
-              className="text-[12px] mt-1.5 leading-[1.65]"
-              style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-body)' }}
-            >
-              {proj.description}
-            </p>
-            <div className="flex flex-wrap gap-1 mt-3">
-              {proj.tech.map((t) => (
-                <span
-                  key={t}
-                  className="text-[9px] px-2 py-0.5"
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    backgroundColor: 'var(--pill-bg)',
-                    color: 'var(--pill-text)',
-                    border: '1px solid var(--pill-border)',
-                    letterSpacing: '0.01em',
-                  }}
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
+            <strong style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{proj.title}</strong>
+            {': '}
+            {proj.description}
             {(proj.github || proj.url) && (
-              <div className="flex gap-3 mt-3">
+              <>
+                {' '}
                 {proj.github && (
                   <a
                     href={proj.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[11px] transition-opacity duration-200 hover:opacity-60"
-                    style={{ color: 'var(--accent)', fontFamily: 'var(--font-sans)' }}
+                    className="transition-opacity duration-200 hover:opacity-60"
+                    style={{ color: 'var(--accent)' }}
                   >
                     GitHub
                   </a>
                 )}
+                {proj.github && proj.url && ' · '}
                 {proj.url && (
                   <a
                     href={proj.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[11px] transition-opacity duration-200 hover:opacity-60"
-                    style={{ color: 'var(--accent)', fontFamily: 'var(--font-sans)' }}
+                    className="transition-opacity duration-200 hover:opacity-60"
+                    style={{ color: 'var(--accent)' }}
                   >
                     Live
                   </a>
                 )}
-              </div>
+              </>
             )}
-          </motion.div>
+          </motion.p>
         ))}
       </div>
 

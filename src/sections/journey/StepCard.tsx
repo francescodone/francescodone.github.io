@@ -118,6 +118,16 @@ function DetailSection({ title, icon, children }: { title: string; icon: React.R
 }
 
 function HighlightsList({ items }: { items: string[] }) {
+  if (items.length === 1) {
+    return (
+      <p
+        className="text-[13.5px] leading-[1.75]"
+        style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-body)' }}
+      >
+        {items[0]}
+      </p>
+    )
+  }
   return (
     <ul className="space-y-2">
       {items.map((item, i) => (

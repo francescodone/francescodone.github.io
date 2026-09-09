@@ -15,6 +15,7 @@ export interface PersonalInfo {
 export interface StepLink {
   label: string
   url: string
+  description?: string
   icon?: 'github' | 'link' | 'pdf' | 'video' | 'slide'
 }
 

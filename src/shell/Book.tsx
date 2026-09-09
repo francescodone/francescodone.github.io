@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode, type WheelEvent as ReactWheelEvent } from 'react'
 import { usePortfolio } from '@shared/contexts/PortfolioContext'
 import { useScrollContext } from '@shared/contexts/ScrollContext'
-import type { BookRecommendation } from '@shared/types/portfolio'
+
 import { BookPage, MobileJourneyPage } from '@sections/journey/BookPage'
 import { BOOK_DRAG_SCROLL_EVENT, TOTAL_BOOK_STOPS, TOTAL_MOBILE_BOOK_STOPS } from '@shared/tokens/design-tokens'
 import { AnimatedDrawing, Flourish } from '@sections/journey/EncyclopediaIllustrations'
@@ -167,15 +167,9 @@ export function Book() {
   })
 
   spreads.push({
-    key: 'chapter-autobiography',
-    left: null,
-    right: <ChapterPage number="1" title="Autobiography" description="A short account of the places, choices, and curiosity that shaped the chapters that follow." />,
-  })
-
-  spreads.push({
     key: 'autobiography',
-    left: <AutobiographyPage title="Across borders" text={data.personal.autobiography[0]} />,
-    right: <AutobiographyPage title="A constant curiosity" text={data.personal.autobiography[1]} />,
+    left: <AutobiographyPage text={data.personal.autobiography[0]} side="left" />,
+    right: <AutobiographyPage text={data.personal.autobiography[1]} side="right" />,
   })
 
   const workSteps = data.journey
@@ -212,18 +206,6 @@ export function Book() {
       right: <BookPage step={step} side="right" />,
       mobile: <MobileJourneyPage step={step} />,
     })
-  })
-
-  spreads.push({
-    key: 'chapter-misc',
-    left: null,
-    right: <ChapterPage number="4" title="Beyond Work" description="Movement, places, ideas, languages, and books worth sharing." />,
-  })
-
-  spreads.push({
-    key: 'misc',
-    left: <MiscPage side="left" />,
-    right: <MiscPage side="right" books={data.personal.recommendedBooks} />,
   })
 
   spreads.push({
@@ -317,10 +299,6 @@ export function Book() {
           <div className="h-full overflow-y-auto" data-book-scroll data-spread-index={0} data-page-side="left">
             {spreads[0].left}
           </div>
-          <div
-            className="absolute top-0 right-0 bottom-0 w-6 pointer-events-none"
-            style={{ background: 'linear-gradient(to left, rgba(42,37,32,0.05), transparent)' }}
-          />
         </div>
 
         {/* ── Static base: right page of last spread ── */}
@@ -390,15 +368,8 @@ export function Book() {
                 <div className="h-full overflow-y-auto" data-book-scroll data-spread-index={i} data-page-side="right" data-page-active={Math.abs(continuousPage - i) < 0.5}>
                   {spreads[i].right}
                 </div>
-                {/* Gutter shadow */}
-                <div
-                  className="absolute top-0 left-0 bottom-0 w-8 pointer-events-none"
-                  style={{
-                    background: 'linear-gradient(to right, rgba(42,37,32,0.05), transparent)',
-                  }}
-                />
                 {/* Fold shadow — darkens as page lifts */}
-                {isTurning && leafProgress < 0.5 && (
+                {isTurning && leafProgress > 0.05 && leafProgress < 0.5 && (
                   <div
                     className="absolute inset-0 pointer-events-none"
                     style={{
@@ -423,15 +394,8 @@ export function Book() {
                 <div className="h-full overflow-y-auto" data-book-scroll data-spread-index={i + 1} data-page-side="left">
                   {spreads[i + 1].left}
                 </div>
-                {/* Gutter shadow */}
-                <div
-                  className="absolute top-0 right-0 bottom-0 w-8 pointer-events-none"
-                  style={{
-                    background: 'linear-gradient(to left, rgba(42,37,32,0.05), transparent)',
-                  }}
-                />
                 {/* Fold shadow — darkens as page lands */}
-                {isTurning && leafProgress > 0.5 && (
+                {isTurning && leafProgress > 0.5 && leafProgress < 0.95 && (
                   <div
                     className="absolute inset-0 pointer-events-none"
                     style={{
@@ -444,13 +408,13 @@ export function Book() {
 
               {/* Cast shadow on the page underneath while turning */}
               {/* Shadow falls on the side the page is moving away from */}
-              {isTurning && (
+              {isTurning && leafProgress > 0.02 && leafProgress < 0.98 && (
                 <div
-                  className={`absolute top-0 bottom-0 w-[30px] pointer-events-none ${leafProgress < 0.5 ? 'left-full' : 'right-full'}`}
+                  className={`absolute top-0 bottom-0 w-[20px] pointer-events-none ${leafProgress < 0.5 ? 'left-full' : 'right-full'}`}
                   style={{
                     background: leafProgress < 0.5
-                      ? 'linear-gradient(to right, rgba(42,37,32,0.08), transparent)'
-                      : 'linear-gradient(to left, rgba(42,37,32,0.08), transparent)',
+                      ? 'linear-gradient(to right, rgba(42,37,32,0.05), transparent)'
+                      : 'linear-gradient(to left, rgba(42,37,32,0.05), transparent)',
                     opacity: leafProgress < 0.5 ? 1 - leafProgress * 2 : (leafProgress - 0.5) * 2,
                     transformStyle: 'flat',
                     transform: leafProgress < 0.5 ? undefined : 'rotateY(180deg)',
@@ -586,16 +550,6 @@ function PageSurface({ side, spreadIndex, children }: { side: 'left' | 'right'; 
       <div className="h-full overflow-y-auto" data-book-scroll data-spread-index={spreadIndex} data-page-side={side}>
         {children}
       </div>
-      {/* Gutter shadow near spine */}
-      <div
-        className="absolute top-0 bottom-0 w-6 pointer-events-none"
-        style={{
-          ...(side === 'left' ? { right: 0 } : { left: 0 }),
-          background: side === 'left'
-            ? 'linear-gradient(to left, rgba(42,37,32,0.05), transparent)'
-            : 'linear-gradient(to right, rgba(42,37,32,0.05), transparent)',
-        }}
-      />
     </div>
   )
 }
@@ -624,6 +578,7 @@ function PageEdgeStack({ side, count }: { side: 'left' | 'right'; count: number 
                 : { right: 0, width: '50%', borderRadius: '0 3px 3px 0' }),
               backgroundColor: 'var(--card-bg)',
               border: '1px solid var(--card-border)',
+              ...(side === 'left' ? { borderRight: 'none' } : { borderLeft: 'none' }),
               opacity: i < visibleEdges ? 0.35 + (i / maxEdges) * 0.35 : 0,
               zIndex: -1 - i,
               transition: 'opacity 120ms ease-out',
@@ -635,29 +590,78 @@ function PageEdgeStack({ side, count }: { side: 'left' | 'right'; count: number 
   )
 }
 
-function AutobiographyPage({ title, text }: { title: string; text: string }) {
+function AutobiographyPage({ text, side }: { text: string; side: 'left' | 'right' }) {
   return (
     <article className="h-full relative">
-      <div className="h-full flex items-center justify-center p-10 overflow-y-auto" data-book-scroll>
-      <div className="w-full max-w-[360px]">
+      <div className="h-full flex flex-col p-10 overflow-y-auto" data-book-scroll>
+      <div className="w-full max-w-[360px] mx-auto my-auto">
+        {side === 'left' && (
+          <>
+            <p
+              className="text-[9px] uppercase tracking-[0.18em] mb-5"
+              style={{ color: 'var(--accent)', fontFamily: 'var(--font-sans)', fontWeight: 600 }}
+            >
+              Chapter 1 · Autobiography
+            </p>
+            <h2
+              className="text-3xl md:text-4xl leading-[1.06] mb-7"
+              style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)', fontWeight: 500, letterSpacing: '-0.045em' }}
+            >
+              My Story
+            </h2>
+          </>
+        )}
         <p
-          className="text-[9px] uppercase tracking-[0.18em] mb-5"
-          style={{ color: 'var(--accent)', fontFamily: 'var(--font-sans)', fontWeight: 600 }}
-        >
-          Chapter 1 · Autobiography
-        </p>
-        <h2
-          className="text-3xl md:text-4xl leading-[1.06]"
-          style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)', fontWeight: 500, letterSpacing: '-0.045em' }}
-        >
-          {title}
-        </h2>
-        <p
-          className="text-[13px] leading-[1.8] mt-7"
+          className="text-[13px] leading-[1.8]"
           style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-body)' }}
         >
           {text}
         </p>
+
+        {side === 'right' && (
+          <div className="mt-8 relative">
+            <div className="w-[190px]">
+              <div
+                className="recognition-photo relative isolate overflow-hidden"
+                style={{ outline: '1px solid var(--image-outline)', boxShadow: 'var(--card-shadow)' }}
+              >
+                <img
+                  src="/IMG_0726.jpg"
+                  alt="Francesco hiking in the Dolomites"
+                  loading="lazy"
+                  decoding="async"
+                  className="block h-auto w-full"
+                />
+              </div>
+            </div>
+            {/* Caption positioned to the right of the photo */}
+            <span
+              className="absolute whitespace-nowrap text-[13px] leading-tight"
+              style={{
+                top: '22%', right: '0px',
+                color: 'var(--text-tertiary)', fontFamily: 'var(--font-body)', fontStyle: 'italic',
+                transform: 'rotate(-5deg)',
+              }}
+            >
+              that&apos;s me, hiking
+            </span>
+            {/* Twisted arrow: starts from caption, loops down, points left into photo */}
+            <svg
+              width="100" height="110" viewBox="0 0 100 110" fill="none"
+              className="absolute pointer-events-none"
+              style={{ top: '32%', left: '200px', color: 'var(--text-tertiary)', opacity: 0.55 }}
+            >
+              <path
+                d="M50 4C42 14 30 30 28 46C26 62 38 72 48 64C58 56 52 38 38 42C24 46 14 60 6 78"
+                stroke="currentColor" strokeWidth="1" strokeLinecap="round" fill="none"
+              />
+              <path
+                d="M2 73L6 78L11 74"
+                stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" fill="none"
+              />
+            </svg>
+          </div>
+        )}
       </div>
       </div>
     </article>
@@ -693,82 +697,6 @@ function ChapterPage({ number, title, description }: { number: string; title: st
   )
 }
 
-function MiscPage({ side, books = [] }: { side: 'left' | 'right'; books?: BookRecommendation[] }) {
-  const entries = side === 'left'
-    ? [
-        ['Sport & movement', 'Practice, endurance, and the value of staying in motion.'],
-        ['Travel & places', 'Observations gathered across cities, cultures, and changing perspectives.'],
-        ['Mindset', 'Principles for learning, building, collaborating, and handling uncertainty.'],
-      ]
-    : [
-        ['Books I recommend', 'Ideas about culture, technology, and the way people think.'],
-        ['Languages', 'Language learning as a tool for connection and cultural understanding.'],
-        ['Curiosities', 'Experiments, interests, and ideas that do not belong in a résumé.'],
-      ]
-
-  return (
-    <div className="h-full relative">
-      <div className="h-full flex flex-col p-9 overflow-y-auto" data-book-scroll>
-      <div className="text-center">
-        <p
-          className="text-[8px] uppercase tracking-[0.2em]"
-          style={{ color: 'var(--text-quaternary)', fontFamily: 'var(--font-sans)', fontWeight: 600 }}
-        >
-          Chapter 4 · Field notes
-        </p>
-        <div className="mt-2">
-          <Flourish width={190} className="mx-auto" />
-        </div>
-      </div>
-      <div className="flex-1 flex flex-col justify-center">
-        {entries.map(([title, description], index) => (
-          <div
-            key={title}
-            className="py-5"
-            style={{ borderTop: '1px dotted var(--border-pattern)' }}
-          >
-            <div className="flex items-baseline gap-3">
-              <span
-                className="text-[9px]"
-                style={{ color: 'var(--accent)', fontFamily: 'var(--font-sans)', fontWeight: 600 }}
-              >
-                {String(index + 1 + (side === 'right' ? 3 : 0)).padStart(2, '0')}
-              </span>
-              <h2
-                className="text-[18px]"
-                style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)', fontWeight: 500, letterSpacing: '-0.03em' }}
-              >
-                {title}
-              </h2>
-            </div>
-            <p
-              className="text-[11px] leading-[1.65] mt-2 pl-8"
-              style={{ color: 'var(--text-tertiary)', fontFamily: 'var(--font-body)' }}
-            >
-              {description}
-            </p>
-            {title === 'Books I recommend' && books.length > 0 && (
-              <ul className="mt-3 pl-8 space-y-2">
-                {books.map((book) => (
-                  <li
-                    key={`${book.title}-${book.author}`}
-                    className="text-[11px] leading-[1.55]"
-                    style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-body)' }}
-                  >
-                    <cite style={{ color: 'var(--text-primary)', fontStyle: 'italic', fontWeight: 500 }}>{book.title}</cite>
-                    <span style={{ color: 'var(--text-tertiary)' }}> — {book.author}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        ))}
-        <div style={{ borderTop: '1px dotted var(--border-pattern)' }} />
-      </div>
-      </div>
-    </div>
-  )
-}
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
@@ -786,13 +714,9 @@ function ContactPage({ contact }: { contact: { email: string; github: string; li
   return (
     <div className="h-full relative">
       <div className="h-full flex flex-col items-center justify-center p-10 text-center overflow-y-auto" data-book-scroll>
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-8 h-[0.5px]" style={{ backgroundColor: 'var(--line-primary)' }} />
-        <svg width="8" height="8" viewBox="0 0 8 8" style={{ color: 'var(--accent)', opacity: 0.4 }}>
-          <path d="M4 0L5 3H8L5.5 5L6.5 8L4 6L1.5 8L2.5 5L0 3H3L4 0Z" fill="currentColor" />
-        </svg>
-        <div className="w-8 h-[0.5px]" style={{ backgroundColor: 'var(--line-primary)' }} />
-      </div>
+      <AnimatedDrawing className="mb-6">
+        <Flourish width={190} />
+      </AnimatedDrawing>
 
       <h2 className="text-2xl md:text-3xl" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)', fontWeight: 400, fontStyle: 'italic' }}>
         Let&apos;s connect

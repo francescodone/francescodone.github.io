@@ -5,8 +5,8 @@
     "tagline": "Building scalable platforms, guiding engineering teams, and turning complex systems into reliable user experiences.",
     "bio": "From London to Munich — building the web, one city at a time.",
     "autobiography": [
-      "My path through software has also been a path across Europe. It began with a first professional experience in London, continued through computer science studies in Padua and Milan, and expanded during an Erasmus exchange in Copenhagen.",
-      "After moving to Germany, I grew from frontend engineering into software architecture in Berlin and Stuttgart. Across every chapter, the constant has been curiosity: learning how systems work, how teams work together, and how technology can make complex experiences feel simple. I speak four languages — Italian, English, German, and Spanish — which helps me connect across cultures and perspectives. I have also been running since childhood, a discipline that shaped the competitive mindset I bring to everything I do."
+      "I grew up in Venice. If you have ever been there you know that nothing is laid out in a straight line, and I think that stuck with me. When I was eighteen I left for London. It was my very first time living outside Italy, and honestly I had no idea what I was doing. But that is exactly why it mattered. I came back with this feeling that I needed to keep going, keep seeing new places, keep figuring things out. So I did. I studied computer science in Padua, spent a semester in Copenhagen, and finished a master's in Milan. Each city taught me something different, but the thread was always the same: I wanted to understand how things work and how to build them better.",
+      "Then I moved to Germany, first to Düsseldorf and then to Munich. Living there changed the way I think about work. I learned to be structured, to be intentional, to care about doing things well rather than just doing a lot. But the part of me that grew up in Italy never went away either. That is where I learned how to listen, how to connect with people, and how to earn trust before trying to lead anything. There is one thing that ties all of this together, and it is the same whether I am at a desk or on a road. I have been running since I was a kid, and when I ran my first marathon in under three hours I realised the mindset that got me there was the exact same one I bring to work: show up every day, do not skip the boring parts, and trust that small consistent effort adds up to something big. That same approach is what led to being recognised with an Impact Award at work. It was not one flashy thing. It was months of showing up, pushing through the hard stretches, and caring about the outcome more than the credit. Between those two sides of my life I went from writing my first lines of code to designing architecture for large platforms. I speak four languages, and I still get excited every time I sit down to solve a problem I have not seen before."
     ],
     "recommendedBooks": [
       { "title": "The Culture Map", "author": "Erin Meyer" },
@@ -29,9 +29,7 @@
       "skills": ["HTML", "CSS", "JavaScript", "WordPress"],
       "details": {
         "highlights": [
-          "Built and maintained client websites for a creative agency",
-          "First professional exposure to version control and deployment workflows",
-          "Lived and worked independently in London at age 18"
+          "I was eighteen and had never lived outside Italy. That summer I built and maintained websites for real clients at a small creative agency, got my first taste of version control and deployment workflows, and figured out how to live on my own in a city where nobody knew me. It was short, but it changed everything."
         ]
       }
     },
@@ -49,13 +47,12 @@
       "skills": ["Java", "C++", "Algorithms", "Software Engineering"],
       "details": {
         "highlights": [
-          "Grade: 97/110",
-          "Focus on Software Engineering",
-          "Summer internship at Capgemini (2019)"
+          "Graduated with 97/110, focused on Software Engineering. During the final year I did a summer internship at Capgemini, which gave me the first taste of working on real software inside a large organisation."
         ],
         "courses": ["Data Structures", "Operating Systems", "Database Systems", "Software Engineering"],
         "links": [
-          { "label": "Soldino — Software Engineering project (NodeJS, React, Solidity)", "url": "#", "icon": "github" }
+          { "label": "Soldino", "description": "A decentralized DApp for VAT-compliant micro-payments on Ethereum, built with React, Redux, Solidity smart contracts, and IPFS. Developed by an eight-person team following a full software engineering lifecycle with formal documentation.", "url": "https://github.com/8LabSolutions/Soldino", "icon": "github" },
+          { "label": "Soldino Docs", "description": "Complete project documentation including requirements analysis, technology assessment, design specification, and user/developer manuals produced for the Software Engineering course.", "url": "https://github.com/8LabSolutions/Soldino_Docs", "icon": "github" }
         ]
       }
     },
@@ -73,8 +70,7 @@
       "skills": ["Software Engineering", "Team Collaboration"],
       "details": {
         "highlights": [
-          "Completed a three-month software engineering internship during the BSc",
-          "Worked on-site with a professional consulting team in Marcon, Veneto"
+          "A three-month internship during my bachelor's where I got to work on-site with a professional consulting team in Marcon, just outside Venice. It was my first real look at how software gets built inside a large organisation, and it made the theory from university feel a lot more concrete."
         ]
       }
     },
@@ -92,19 +88,12 @@
       "skills": ["AI", "Machine Learning", "PyTorch", "Reinforcement Learning"],
       "details": {
         "highlights": [
-          "Grade: 106/110",
-          "Focus on Artificial Intelligence with foundations on AGI and HCI",
-          "Erasmus semester at University of Copenhagen (2020–2021)",
-          "Scrum Master & Software Engineer at IT Cube Consulting (2021)"
+          "Graduated with 106/110, specialising in Artificial Intelligence with foundations in AGI and Human-Computer Interaction. Spent a semester on Erasmus exchange at the University of Copenhagen, and worked part-time as a Scrum Master and Software Engineer at IT Cube Consulting during the final year."
         ],
         "papers": [
-          { "label": "Analysis of recurrent models of visual attention with reinforcement learning — Master Thesis", "url": "#", "icon": "pdf" }
+          { "label": "Analysis of recurrent models of visual attention with reinforcement learning", "description": "Master thesis bridging neuroscience with reinforcement learning, exploring how recurrent attention models learn to focus on relevant visual features.", "url": "https://github.com/francescodone/Master-Thesis/blob/main/Thesis.pdf", "icon": "pdf" }
         ],
-        "courses": ["Natural Language Processing", "Reinforcement Learning", "Computer Vision", "Human-Computer Interaction"],
-        "links": [
-          { "label": "Question Answering system (PyTorch)", "url": "#", "icon": "github" },
-          { "label": "Local-Volatility Calibration (CUDA, C++)", "url": "#", "icon": "github" }
-        ]
+        "courses": ["Natural Language Processing", "Reinforcement Learning", "Computer Vision", "Human-Computer Interaction"]
       }
     },
     {
@@ -121,9 +110,14 @@
       "skills": ["Software Engineering", "AI", "NLP", "Cross-cultural collaboration"],
       "details": {
         "highlights": [
-          "Focus on Software Engineering and Artificial Intelligence",
-          "Collaborated with international teams on research projects",
-          "Experienced a different academic culture and teaching methodology"
+          "Focused on Software Engineering and Artificial Intelligence, collaborating with international teams on research projects. Finished with an exam average of 12/12. It was a completely different academic culture, and working across backgrounds and perspectives sharpened both my technical and communication skills."
+        ],
+        "links": [
+          { "label": "Question Answering system", "description": "A neural question answering system built with PyTorch as part of the NLP coursework.", "url": "https://github.com/francescodone/Question-Answering-system/blob/main/Report.pdf", "icon": "pdf" },
+          { "label": "Local-Volatility Calibration", "description": "Parallelizing volatility calibration on CPU (OpenMP) and GPU (CUDA) using the Crank-Nicolson finite difference method. The GPU version achieved over 30x speedup on large datasets.", "url": "https://github.com/francescodone/Local-Volatility-Calibration", "icon": "github" },
+          { "label": "Programming Massively Parallel Hardware", "description": "Covering GPU programming patterns, parallel scan, reduction, and optimisation techniques in CUDA and Futhark.", "url": "https://github.com/francescodone/PMPH", "icon": "github" },
+          { "label": "Vision and Image Processing", "description": "Five assignments spanning linear algebra for images, filtering and edge detection, photometric stereo, content-based image retrieval, and segmentation.", "url": "https://github.com/francescodone/Vision-and-Image-Processing", "icon": "github" },
+          { "label": "Collaborative Computing", "description": "Course report on collaborative computing models, exploring distributed systems and cooperative problem-solving strategies.", "url": "https://github.com/francescodone/CollComp/blob/main/Report.pdf", "icon": "pdf" }
         ]
       }
     },
@@ -137,12 +131,11 @@
       "country": "Italy",
       "lat": 45.46,
       "lon": 9.19,
-      "description": "Working in software engineering and agile delivery within a hybrid consulting team while completing postgraduate studies.",
-      "skills": ["Software Engineering", "Scrum", "Agile Delivery"],
+      "description": "Full-stack consulting across two client projects, growing from software engineer to project manager and Scrum Master.",
+      "skills": ["Java", "Spring Boot", "React", "C#", "SQL Server", "Agile Scrum"],
       "details": {
         "highlights": [
-          "Worked full-time as a software engineer in a hybrid consulting environment",
-          "Served as Scrum Master alongside software engineering responsibilities"
+          "I joined while finishing my master's and was placed on ITSentinel, a Windows Service agent that silently monitors machines, reporting on services, events, drives, and antivirus status every two minutes to a central dashboard built with Java, Spring Boot, and React. I started as a developer and grew into the project manager role, coordinating a four-person team and owning delivery end-to-end. The project ran on Agile Scrum, and the experience of shipping a real product for a paying client while juggling university gave me the pace and discipline I still carry."
         ]
       }
     },
@@ -160,9 +153,7 @@
       "skills": ["Vue.js", "TypeScript", "Adobe Analytics", "CI/CD"],
       "details": {
         "highlights": [
-          "Full-time frontend engineer in a hybrid international environment",
-          "Earned Adobe Analytics Developer Professional certification (AD0-E213)",
-          "EFSET C2 Proficient English certification"
+          "My first full-time role in Germany and my real entry into enterprise frontend. I worked in a hybrid international team building digital experiences, earned an Adobe Analytics Developer Professional certification along the way, and started to feel at home in the kind of large-scale, multi-team environment I would later grow into."
         ],
         "awards": [
           { "title": "AD0-E213 Adobe Analytics Developer Professional", "issuer": "Adobe", "year": "2022" },
@@ -184,16 +175,7 @@
       "skills": ["Architecture", "Vue.js", "AI Agents", "Kubernetes", "Datadog", "Terraform"],
       "details": {
         "highlights": [
-          "Received the Impact Award in 2024 and 2025",
-          "Designed an AG-UI interface with custom AI agents for the digital showroom",
-          "Architected a Generative Engine Optimization (GEO) data pipeline for vehicle discoverability across LLMs",
-          "Designed and implemented a scalable Backend-for-Frontend (BFF) architecture",
-          "Introduced error budget policies aligning reliability with development velocity",
-          "Led SSR integration in a Vue3–AEM environment",
-          "Led Micro Frontend migration involving 40+ developers across 6 FE teams",
-          "Reduced bundle size by over 80%",
-          "Implemented FE monitoring with Datadog and Terraform, enabling On-Call-Duty across teams",
-          "Lowered CLS to quasi-0 in AEM environment"
+          "This is where things came together. I designed a scalable Backend-for-Frontend architecture, led a micro-frontend migration involving over 40 developers across six teams, and introduced error budget policies that gave us a shared language between reliability and speed. I built out frontend monitoring with Datadog and Terraform so teams could run on-call duty with confidence, cut bundle size by more than 80 percent, brought CLS down to nearly zero in an AEM environment, and led the SSR integration for Vue 3. More recently I have been designing AI agents with an AG-UI interface for the digital showroom and architecting a Generative Engine Optimization pipeline to make vehicles discoverable across LLMs. Along the way I received the Impact Award in both 2024 and 2025, which honestly meant a lot because it came from the same place as everything else I care about: showing up, doing the work, and making things better than I found them."
         ],
         "awards": [
           { "title": "Impact Award", "issuer": "Mercedes-Benz.io", "year": "2025" },
@@ -251,10 +233,10 @@
     {
       "id": "proj-4",
       "title": "Local-Volatility Calibration",
-      "description": "GPU-accelerated financial modeling using massively parallel computation on CUDA.",
-      "tech": ["CUDA", "C++", "Parallel Computing"],
+      "description": "Parallelizing volatility calibration on CPU (OpenMP) and GPU (CUDA) using the Crank-Nicolson finite difference method. The GPU version achieved over 30x speedup on large datasets. University of Copenhagen, 2020.",
+      "tech": ["CUDA", "C++", "OpenMP", "Parallel Computing"],
       "url": "",
-      "github": ""
+      "github": "https://github.com/francescodone/Local-Volatility-Calibration"
     }
   ],
   "contact": {

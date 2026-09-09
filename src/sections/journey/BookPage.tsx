@@ -168,7 +168,7 @@ function DetailsPage({ step }: { step: JourneyStep }) {
         </p>
       </header>
 
-      <div className="flex-1 max-w-[390px] mx-auto w-full py-8 space-y-7">
+      <div className="flex-1 max-w-[390px] mx-auto w-full py-6 space-y-5">
         <DetailsContent step={step} />
       </div>
       </div>
@@ -205,7 +205,7 @@ function DetailsContent({ step }: { step: JourneyStep }) {
           </p>
         </section>
       )}
-      {references.length > 0 && <ReferencesList items={references} />}
+      {references.length > 0 && <ReferencesList items={references} title={step.type === 'education' ? 'Projects' : 'References'} />}
       {!hasDetails && (
         <p
           className="text-[13px] leading-[1.75]"
@@ -233,18 +233,27 @@ function TextList({ title, items }: { title: string; items: string[] }) {
   return (
     <section>
       <SectionTitle>{title}</SectionTitle>
-      <ul className="space-y-2.5">
-        {items.map((item) => (
-          <li
-            key={item}
-            className="text-[12px] leading-[1.65] pl-4 relative"
-            style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-body)' }}
-          >
-            <span className="absolute left-0">—</span>
-            {item}
-          </li>
-        ))}
-      </ul>
+      {items.length === 1 ? (
+        <p
+          className="text-[12px] leading-[1.75]"
+          style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-body)' }}
+        >
+          {items[0]}
+        </p>
+      ) : (
+        <ul className="space-y-2.5">
+          {items.map((item) => (
+            <li
+              key={item}
+              className="text-[12px] leading-[1.65] pl-4 relative"
+              style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-body)' }}
+            >
+              <span className="absolute left-0">—</span>
+              {item}
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   )
 }
@@ -255,7 +264,7 @@ function AwardsList({ items, images }: { items: StepAward[]; images?: StepImage[
 
   return (
     <section>
-      <SectionTitle>Recognition</SectionTitle>
+      <SectionTitle>Awards & Certificates</SectionTitle>
       <div className="space-y-3">
         {sortedItems.map((award) => (
           <p
@@ -300,22 +309,34 @@ function AwardsList({ items, images }: { items: StepAward[]; images?: StepImage[
   )
 }
 
-function ReferencesList({ items }: { items: StepLink[] }) {
+function ReferencesList({ items, title = 'References' }: { items: StepLink[]; title?: string }) {
   return (
     <section>
-      <SectionTitle>References</SectionTitle>
+      <SectionTitle>{title}</SectionTitle>
       <div className="space-y-2">
         {items.map((link) => (
-          <a
+          <p
             key={`${link.label}-${link.url}`}
-            href={link.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block text-[12px] leading-[1.55] transition-opacity hover:opacity-60"
-            style={{ color: 'var(--accent)', fontFamily: 'var(--font-body)' }}
+            className="text-[11px] leading-[1.7]"
+            style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-body)' }}
           >
-            {link.label} ↗
-          </a>
+            <strong style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{link.label}</strong>
+            {link.description && <>{': '}{link.description}</>}
+            {link.url && link.url !== '#' && (
+              <>
+                {' '}
+                <a
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-opacity hover:opacity-60"
+                  style={{ color: 'var(--accent)' }}
+                >
+                  ↗
+                </a>
+              </>
+            )}
+          </p>
         ))}
       </div>
     </section>
