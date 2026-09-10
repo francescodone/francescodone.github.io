@@ -94,11 +94,18 @@ export function Book() {
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.button !== 0 || (event.target as Element).closest('a, button')) return
+    /* Snap startScroll to the nearest page boundary so any accumulated
+       scroll-position drift from the previous swipe is discarded. */
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight
+    const nearestStep = maxScroll > 0
+      ? Math.round((window.scrollY / maxScroll) * totalStops)
+      : 0
+    const snappedScroll = maxScroll > 0 ? (nearestStep / totalStops) * maxScroll : 0
     dragRef.current = {
       pointerId: event.pointerId,
       startX: event.clientX,
       startY: event.clientY,
-      startScroll: window.scrollY,
+      startScroll: Math.abs(snappedScroll - window.scrollY) < 40 ? snappedScroll : window.scrollY,
       axis: 'pending',
     }
     event.currentTarget.setPointerCapture(event.pointerId)
@@ -117,7 +124,7 @@ export function Book() {
     if (dragRef.current.axis === 'vertical') return
 
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight
-    const pageWidth = event.currentTarget.getBoundingClientRect().width / (isMobile ? 1 : 2)
+    const pageWidth = event.currentTarget.clientWidth / (isMobile ? 1 : 2)
     const scrollPerPage = maxScroll / totalStops
     const target = Math.min(
       maxScroll,
@@ -442,6 +449,10 @@ interface MobileBookProps {
 function MobileBook({ pages, continuousPage, isDragging, onPointerDown, onPointerMove, onPointerEnd, onWheel }: MobileBookProps) {
   const lastIndex = pages.length - 1
   const activePageIndex = Math.min(lastIndex, Math.max(0, Math.round(continuousPage)))
+  /* Snap visual position to exact integer when settled — eliminates cumulative
+     float drift from scroll-position rounding and iOS dynamic-viewport shifts. */
+  const isSettled = !isDragging && Math.abs(continuousPage - activePageIndex) < 0.08
+  const effectivePage = isSettled ? activePageIndex : continuousPage
 
   useEffect(() => {
     const page = document.querySelector<HTMLElement>(`[data-mobile-page-index="${activePageIndex}"]`)
@@ -477,7 +488,7 @@ function MobileBook({ pages, continuousPage, isDragging, onPointerDown, onPointe
         />
 
         {pages.map((page, index) => {
-          const offset = index - continuousPage
+          const offset = index - effectivePage
           const isVisible = Math.abs(offset) < 1.05
           const clampedOffset = Math.min(1.05, Math.max(-1.05, offset))
 
