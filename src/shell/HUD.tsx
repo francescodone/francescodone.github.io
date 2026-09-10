@@ -353,10 +353,8 @@ export function HUD() {
   const workStart = 3
   const educationChapter = workStart + workSteps.length
   const academicStart = educationChapter + 1
-  const beyondWorkChapter = academicStart + academicSteps.length
-  const miscStep = beyondWorkChapter + 1
-  const contactStep = miscStep + 1
-  const mobileTwoSidedSpreads = [autobiographyStep, miscStep]
+  const contactStep = academicStart + academicSteps.length
+  const mobileTwoSidedSpreads = [autobiographyStep]
   const desktopStepLabels = [
     'Cover',
     'Autobiography',
@@ -364,8 +362,6 @@ export function HUD() {
     ...workSteps.map((step) => step.institution),
     'Chapter 3: Education',
     ...academicSteps.map((step) => step.institution),
-    'Chapter 4: Beyond Work',
-    'Field Notes',
     'Contact',
   ]
   const mobileStepLabels = [
@@ -376,9 +372,6 @@ export function HUD() {
     ...workSteps.map((step) => step.institution),
     'Chapter 3: Education',
     ...academicSteps.map((step) => step.institution),
-    'Chapter 4: Beyond Work',
-    'Field Notes · I',
-    'Field Notes · II',
     'Contact',
   ]
   const stepLabels = isMobile ? mobileStepLabels : desktopStepLabels
@@ -425,20 +418,6 @@ export function HUD() {
       content: getJourneySearchContent(step),
       step: academicStart + index,
     })),
-    {
-      id: 'chapter-misc',
-      title: 'Chapter 4: Beyond Work',
-      subtitle: 'Movement, places, ideas, languages, and books worth sharing.',
-      content: 'Chapter 4 Beyond Work Movement places ideas languages books worth sharing',
-      step: beyondWorkChapter,
-    },
-    {
-      id: 'misc',
-      title: 'Field Notes',
-      subtitle: 'Chapter 4 · Field notes',
-      content: `Sport & movement Practice endurance and the value of staying in motion Travel & places Observations gathered across cities cultures and changing perspectives Mindset Principles for learning building collaborating and handling uncertainty Books I recommend ${data.personal.recommendedBooks.map((book) => `${book.title} ${book.author}`).join(' ')} Languages Language learning as a tool for connection and cultural understanding Curiosities Experiments interests and ideas that do not belong in a résumé`,
-      step: miscStep,
-    },
     {
       id: 'contact',
       title: 'Contact Francesco',
